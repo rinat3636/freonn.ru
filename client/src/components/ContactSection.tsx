@@ -78,6 +78,8 @@ export default function ContactSection() {
           message: form.message,
           fileUrl: fileUrl || undefined,
           fileName: file?.name || undefined,
+          pageUrl: window.location.href,
+          referrer: document.referrer || undefined,
         }),
       });
       if (res.ok) {

@@ -115,6 +115,8 @@ export default function FreonnAIChat() {
           phone,
           message: "Заявка из AI-чата — перезвоните",
           service: "Обратный звонок",
+          pageUrl: window.location.href,
+          referrer: document.referrer || undefined,
         }),
       });
       if (res.ok) {

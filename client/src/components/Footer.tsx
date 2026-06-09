@@ -2,6 +2,7 @@
  * FREONN FOOTER — Full ceds.ru navigation structure
  * Brand: Freonn — dark navy #0F1340, red accent #B91C1C
  */
+import { getFooterCityLinks, getFooterServiceGeoLinks } from "@shared/geoRoutes";
 import { Phone, Mail, MapPin, Clock, Youtube } from "lucide-react";
 import { ymGoal } from "@/lib/ym";
 
@@ -56,30 +57,14 @@ const footerLinks: Record<string, { label: string; href: string }[]> = {
   ],
 };
 
-const cities: { label: string; href: string }[] = [
-  { label: "Москва", href: "/moskva" },
-  { label: "Московская область", href: "/moskovskaya-oblast" },
-  { label: "Дзержинский", href: "/dzerzhinskij" },
-  { label: "Люберцы", href: "/lyubertsy" },
-  { label: "Мытищи", href: "/mytishchi" },
-  { label: "Одинцово", href: "/odintsovo" },
-  { label: "Подольск", href: "/podolsk" },
-  { label: "Зеленоград", href: "/zelenograd" },
-  { label: "Раменское", href: "/ramenskoe" },
-  { label: "Долгопрудный", href: "/dolgoprudny" },
-  { label: "Ногинск", href: "/noginsk" },
-  { label: "Истра", href: "/istra" },
-  { label: "Домодедово", href: "/domodedovo" },
-  { label: "Клин", href: "/klin" },
-  { label: "Коломна", href: "/kolomna" },
-  { label: "Дмитров", href: "/dmitrov" },
-];
+const cities = getFooterCityLinks();
+const serviceGeoLinks = getFooterServiceGeoLinks();
 
 export default function Footer() {
   return (
     <footer className="bg-[#080D2E] text-white">
       <div className="container py-14">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
           {/* Logo & description */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <img src={LOGO_URL} alt="Freonn" className="h-10 w-auto mb-4" loading="lazy" decoding="async" width="160" height="40" />
@@ -163,16 +148,33 @@ export default function Footer() {
             </div>
           ))}
 
-          {/* Cities */}
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-6 sm:gap-8 mt-10 pt-8 border-t border-white/10">
           <div>
             <h4 className="font-heading font-semibold text-white uppercase text-xs tracking-wider mb-4 pb-2 border-b border-white/10">
-              Города
+              Города Москвы и МО
             </h4>
-            <ul className="space-y-1.5">
-              {cities.map(city => (
-                <li key={city.label}>
+            <ul className="columns-2 gap-4 space-y-1.5">
+              {cities.map((city) => (
+                <li key={city.href} className="break-inside-avoid">
                   <a href={city.href} className="text-white/50 hover:text-[#B91C1C] transition-colors text-xs font-body">
                     {city.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-heading font-semibold text-white uppercase text-xs tracking-wider mb-4 pb-2 border-b border-white/10">
+              Услуги в регионе
+            </h4>
+            <ul className="columns-2 gap-4 space-y-1.5">
+              {serviceGeoLinks.map((link) => (
+                <li key={link.href} className="break-inside-avoid">
+                  <a href={link.href} className="text-white/50 hover:text-[#B91C1C] transition-colors text-xs font-body">
+                    {link.label}
                   </a>
                 </li>
               ))}

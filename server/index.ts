@@ -1,3 +1,7 @@
+/**
+ * @deprecated Production uses server/_core/index.ts (see railway.toml).
+ * Kept for reference; do not use as entry point.
+ */
 import express from "express";
 import { createServer } from "http";
 import path from "path";

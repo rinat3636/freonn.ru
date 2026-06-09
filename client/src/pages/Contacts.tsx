@@ -9,7 +9,7 @@ export default function ContactsPage() {
 
   useSEO({
     title: "Контакты — Freonn инженерная компания",
-    description: "Свяжитесь с нами: 8(800)101-2009 (бесплатно). Офис в Москве. Выезд инженера по Москве и МО. Оставьте заявку онлайн — ответим в течение 15 минут.",
+    description: "Свяжитесь с нами: 8(800)101-2009 (бесплатно). Офис в Дзержинском, Московская область. Выезд инженера по Москве и МО. Оставьте заявку онлайн — ответим в течение 15 минут.",
     keywords: "контакты Freonn, телефон инженерной компании, заявка на вентиляцию, вызов инженера Москва, адрес офиса",
     canonical: "/contacts",
     breadcrumbs: [{ name: "Контакты", url: "/contacts" }],
@@ -27,10 +27,16 @@ export default function ContactsPage() {
         url: "https://freonn.ru",
         address: {
           "@type": "PostalAddress",
+          streetAddress: "ул. Ленина, д. 2Б",
           addressCountry: "RU",
-          addressRegion: "Москва",
-          addressLocality: "Москва",
-          postalCode: "121099",
+          addressRegion: "Московская область",
+          addressLocality: "Дзержинский",
+          postalCode: "143500",
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: 55.9167,
+          longitude: 36.8667,
         },
         openingHoursSpecification: [
           {

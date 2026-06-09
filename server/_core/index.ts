@@ -11,6 +11,7 @@ import { serveStatic, setupVite } from "./vite";
 import { notifyOwner } from "./notification";
 import { uploadFileToSupabase } from "../supabaseStorage";
 import { groqChat, groqChatStream, isGroqAvailable, GROQ_CONTENT_MODEL } from "../groq";
+import { getCityEntry } from "../../shared/geoRoutes";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -53,6 +54,20 @@ const FALLBACK_ANSWERS = [
 
 const getRandomFallback = () => FALLBACK_ANSWERS[Math.floor(Math.random() * FALLBACK_ANSWERS.length)];
 
+function getCitySeoFallback(city: string, cityName: string) {
+  const entry = getCityEntry(city);
+  const cityIn = entry?.phrase ?? `в ${cityName}`;
+  const district =
+    city === "moskovskaya-oblast" ? "Московской области"
+    : city === "moskva" ? "Москве"
+    : `${cityName}ском районе`;
+  return {
+    lsi: `Freonn выполняет полный комплекс работ по монтажу инженерных систем ${cityIn}. Работаем с промышленными предприятиями и коммерческой недвижимостью.`,
+    district,
+    objects: "Промышленные объекты, коммерческая недвижимость, ЖК",
+  };
+}
+
 async function startServer() {
   const app = express();
   const server = createServer(app);
@@ -73,6 +88,7 @@ async function startServer() {
     "/feed":         "/",
     "/xmlrpc.php":   "/",
     "/sitemap_index.xml": "/sitemap.xml",
+    "/about":        "/o-kompanii",
   };
   app.use((req, res, next) => {
     const pathname = req.path.replace(/\/$/, "") || "/";
@@ -157,7 +173,7 @@ async function startServer() {
   // Form submission → MAX bot
   app.post("/api/submit-form", async (req, res) => {
     try {
-      const { name, phone, email, service, message, fileUrl, fileName } = req.body || {};
+      const { name, phone, email, service, message, fileUrl, fileName, pageUrl, referrer } = req.body || {};
       if (!name || !phone) {
         res.status(400).json({ success: false, error: "Имя и телефон обязательны" });
         return;
@@ -169,6 +185,8 @@ async function startServer() {
         `📞 Телефон: ${phone}`,
         email ? `📧 Email: ${email}` : null,
         service ? `🔧 Услуга: ${service}` : null,
+        pageUrl ? `🌐 Страница: ${pageUrl}` : null,
+        referrer ? `↩️ Источник: ${referrer}` : null,
         message ? `💬 Сообщение: ${message}` : null,
         fileUrl ? `📎 Документ: ${fileName || "файл"} — ${fileUrl}` : null,
       ]
@@ -282,7 +300,8 @@ async function startServer() {
     try {
       const { city, cityName } = req.body || {};
       if (!city || !cityName) { res.status(400).json({ error: "city and cityName are required" }); return; }
-      const fallback = { lsi: `Freonn выполняет полный комплекс работ по монтажу инженерных систем в ${cityName}е. Работаем с промышленными предприятиями и коммерческой недвижимостью.`, district: `${cityName}ском районе`, objects: "Промышленные объекты, коммерческая недвижимость, ЖК", fallback: true };
+      const cityFallback = getCitySeoFallback(city, cityName);
+      const fallback = { ...cityFallback, fallback: true };
       if (!isGroqAvailable()) { res.json(fallback); return; }
       const prompt = `Напиши уникальный SEO-текст (2–3 предложения, 60–80 слов) для страницы "Монтаж инженерных систем в ${cityName}" компании Freonn. Включи LSI: вентиляция, кондиционирование, дымоудаление, отопление. Упомяни специфику ${cityName}. Ответь в JSON: {"lsi": "...", "district": "...", "objects": "..."}`;
       const result = await groqChat([{ role: "user", content: prompt }], GROQ_CONTENT_MODEL, 300);
@@ -363,7 +382,8 @@ async function startServer() {
     try {
       const { city, cityName } = req.body || {};
       if (!city || !cityName) { res.status(400).json({ error: "city and cityName are required" }); return; }
-      const fallback = { lsi: `Freonn выполняет полный комплекс работ по монтажу инженерных систем в ${cityName}е.`, district: `${cityName}ском районе`, objects: "Промышленные объекты, коммерческая недвижимость", faq: [], fallback: true };
+      const cityFallback = getCitySeoFallback(city, cityName);
+      const fallback = { ...cityFallback, faq: [], fallback: true };
       if (!isGroqAvailable()) { res.json(fallback); return; }
       const prompt = `Ты SEO-эксперт. Для страницы "Монтаж инженерных систем в ${cityName}" компании Freonn создай:
 1. LSI-текст (2–3 предложения, 60–80 слов) с упоминанием специфики ${cityName}
@@ -394,6 +414,9 @@ async function startServer() {
     // Только города с реальными страницами в CityPage.tsx (правильные slug без опечаток)
     const cities = ["moskva","moskovskaya-oblast","dzerzhinskij","balashikha","khimki","korolev","mytishchi","odintsovo","podolsk","krasnogorsk","lyubertsy","zhukovsky","elektrostal","sergiev-posad","noginsk","klin","istra","domodedovo","ramenskoe","stupino","chekhov","serpukhov","kolomna","voskresensk","kashira","mozhaisk","ruza","volokolamsk","taldom","dubna","dmitrov","dolgoprudny","fryazevo","pushkino","lobnya","krasnoznamensk","zelenograd","troitsk","shcherbinka","shchelkovo","naro-fominsk","orekhovo-zuevo","protvino","solnechnogorsk"];
     const services = ["ventilyaciya","kondicionirovanie","dymoudalenie","otoplenie","holodosnabzhenie","vodosnabzhenie","peskostrujnaya-obrabotka","elektrosnabzhenie"];
+    const geoPages = services.flatMap(s => ["moskva", "moskovskaya-oblast"].map(g => `${s}-${g}`));
+    const objects = ["sklad","ofis","tc","zavod","restoran","gostinica","shkola","bolnica","parking","dc"];
+    const objectPages = services.flatMap(s => objects.map(o => `${s}-${o}`));
     const today = new Date().toISOString().split("T")[0];
     const urls = [
       { loc: baseUrl, priority: "1.0", changefreq: "weekly" },
@@ -402,6 +425,8 @@ async function startServer() {
       { loc: `${baseUrl}/contacts`, priority: "0.7", changefreq: "monthly" },
       { loc: `${baseUrl}/o-kompanii`, priority: "0.7", changefreq: "monthly" },
       ...services.map(s => ({ loc: `${baseUrl}/${s}`, priority: "0.85", changefreq: "weekly" })),
+      ...geoPages.map(p => ({ loc: `${baseUrl}/${p}`, priority: "0.8", changefreq: "weekly" })),
+      ...objectPages.map(p => ({ loc: `${baseUrl}/${p}`, priority: "0.7", changefreq: "monthly" })),
       ...cities.map(c => ({ loc: `${baseUrl}/${c}`, priority: "0.75", changefreq: "weekly" })),
     ];
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -1,6 +1,7 @@
 /*
  * Карта сайта — /karta-sajta (HTML-обзор основных URL + ссылка на sitemap.xml)
  */
+import { getKartaSajtaCityLinks, getKartaSajtaServiceGeoLinks } from "@shared/geoRoutes";
 import { useSEO } from "@/hooks/useSEO";
 import PageLayout from "@/components/PageLayout";
 
@@ -44,13 +45,36 @@ const SECTIONS: { title: string; links: { href: string; label: string }[] }[] = 
       { href: "/akcii", label: "Акции" },
     ],
   },
+  {
+    title: "Москва и Московская область",
+    links: getKartaSajtaCityLinks(),
+  },
+  {
+    title: "Услуги в Москве и МО",
+    links: getKartaSajtaServiceGeoLinks(),
+  },
+  {
+    title: "Популярные объекты",
+    links: [
+      { href: "/ventilyaciya-sklad", label: "Вентиляция складов" },
+      { href: "/ventilyaciya-ofis", label: "Вентиляция офисов" },
+      { href: "/ventilyaciya-zavod", label: "Вентиляция производств" },
+      { href: "/kondicionirovanie-ofis", label: "Кондиционирование офисов" },
+      { href: "/kondicionirovanie-dc", label: "Кондиционирование серверных" },
+      { href: "/dymoudalenie-tc", label: "Дымоудаление торговых центров" },
+      { href: "/dymoudalenie-parking", label: "Дымоудаление паркингов" },
+      { href: "/otoplenie-sklad", label: "Отопление складов" },
+      { href: "/elektrosnabzhenie-sklad", label: "Электроснабжение складов" },
+      { href: "/holodosnabzhenie-zavod", label: "Холодоснабжение производств" },
+    ],
+  },
 ];
 
 export default function KartaSajtaPage() {
   useSEO({
     title: "Карта сайта — Freonn",
     description:
-      "Основные разделы сайта freonn.ru: услуги, цены, блог, контакты. Полный перечень URL в файле sitemap.xml.",
+      "Основные разделы сайта freonn.ru: услуги, цены, блог, контакты, Москва и Московская область. Полный перечень URL в файле sitemap.xml.",
     canonical: "/karta-sajta",
     breadcrumbs: [{ name: "Карта сайта", url: "/karta-sajta" }],
     jsonLd: {
@@ -58,7 +82,7 @@ export default function KartaSajtaPage() {
       "@type": "WebPage",
       "@id": "https://freonn.ru/karta-sajta#webpage",
       name: "Карта сайта — Freonn",
-      description: "Навигация по основным разделам сайта freonn.ru.",
+      description: "Навигация по основным разделам сайта freonn.ru и гео-страницам Москвы и Московской области.",
       url: "https://freonn.ru/karta-sajta",
       isPartOf: { "@id": "https://freonn.ru/#website" },
       publisher: { "@id": "https://freonn.ru/#organization" },

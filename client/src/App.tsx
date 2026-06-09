@@ -34,6 +34,7 @@ import AppCallback from "./pages/auth/AppCallback";
 import PolitikaKonfidencialnostiPage from "./pages/PolitikaKonfidencialnosti";
 import KartaSajtaPage from "./pages/KartaSajta";
 import ServiceObjectPage, { SERVICES, OBJECT_TYPES } from "./pages/ServiceObjectPage";
+import ServiceGeoPage, { SERVICE_GEO_ROUTES } from "./pages/ServiceGeoPage";
 
 function Router() {
   return (
@@ -150,6 +151,13 @@ function Router() {
           );
         })
       )}
+
+      {/* Service × Geo landing pages for Moscow and Moscow region */}
+      {SERVICE_GEO_ROUTES.map((route) => (
+        <Route key={route.path} path={route.path}>
+          {() => <ServiceGeoPage serviceKey={route.serviceKey} regionKey={route.regionKey} />}
+        </Route>
+      ))}
 
       {/* City pages — MUST be last before 404 */}
       <Route path={"/:city"}>

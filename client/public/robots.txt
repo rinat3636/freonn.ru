@@ -1,13 +1,15 @@
 # robots.txt — freonn.ru
 # Инженерная компания Freonn | ООО «ЭКС»
 # Монтаж инженерных систем в Москве и МО
-# Обновлено: 2026-05-11
+# Обновлено: 2026-06-09
 
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /404
 Disallow: /admin/
+Disallow: /auth/
+Disallow: /spasibo
 # Закрываем несуществующие страницы
 Disallow: /about
 Disallow: /about/
@@ -37,6 +39,8 @@ Allow: /
 Disallow: /api/
 Disallow: /404
 Disallow: /admin/
+Disallow: /auth/
+Disallow: /spasibo
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
@@ -64,6 +68,8 @@ Allow: /
 Disallow: /api/
 Disallow: /404
 Disallow: /admin/
+Disallow: /auth/
+Disallow: /spasibo
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
@@ -90,6 +96,8 @@ Allow: /
 Disallow: /api/
 Disallow: /404
 Disallow: /admin/
+Disallow: /auth/
+Disallow: /spasibo
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
