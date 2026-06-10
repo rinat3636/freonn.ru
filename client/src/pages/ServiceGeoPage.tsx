@@ -1,4 +1,11 @@
-import { buildServiceGeoPath } from "@shared/geoRoutes";
+import {
+  buildServiceLocationPath,
+  getCityAreaType,
+  getCityEntry,
+  getNearbyCityLinks,
+  type GeoSlug,
+} from "@shared/geoRoutes";
+import { getCityTier, getTier1NearbyLinks } from "@shared/geoTiers";
 import { useSEO } from "@/hooks/useSEO";
 import PageLayout from "@/components/PageLayout";
 import ContactSection from "@/components/ContactSection";
@@ -171,49 +178,89 @@ function buildFaq(serviceName: string, serviceGenitive: string, regionPhrase: st
   ];
 }
 
-export const SERVICE_GEO_ROUTES = Object.entries(GEO_SERVICES).flatMap(([serviceKey, service]) =>
-  Object.keys(GEO_REGIONS).map((regionKey) => ({
-    path: `/${service.slug}-${regionKey}`,
-    serviceKey,
-    regionKey: regionKey as GeoKey,
-  }))
-);
+function resolveLocationContext(locationSlug: string) {
+  const region = GEO_REGIONS[locationSlug as GeoSlug];
+  if (region) {
+    return {
+      name: region.name,
+      phrase: region.phrase,
+      areaType: region.areaType,
+      description: region.description,
+      coverageTitle: region.coverageTitle,
+      coverage: region.coverage,
+      nearby: region.nearby,
+      cityHref: `/${locationSlug}`,
+      proofTitle:
+        locationSlug === "moskva" ? "Опыт на объектах Москвы" : "Опыт на объектах Московской области",
+      proofCases: locationSlug === "moskva" ? proofCasesMoscow : proofCasesRegion,
+      omitRegionMeta: locationSlug === "moskovskaya-oblast",
+    };
+  }
+
+  const city = getCityEntry(locationSlug);
+  if (!city) return null;
+
+  return {
+    name: city.name,
+    phrase: city.phrase,
+    areaType: getCityAreaType(locationSlug),
+    description: `Выезжаем на коммерческие, складские, производственные и социальные объекты ${city.phrase}. Инженер Freonn обследует площадку, подбирает оборудование и готовит смету под ваш проект.`,
+    coverageTitle: `Работаем ${city.phrase}`,
+    coverage: [city.name, "Московская область", "Москва"],
+    nearby: getCityTier(locationSlug) <= 1 ? getTier1NearbyLinks(locationSlug) : getNearbyCityLinks(locationSlug, 3),
+    cityHref: `/${locationSlug}`,
+    proofTitle: `Опыт на объектах ${city.name} и МО`,
+    proofCases: proofCasesRegion,
+    omitRegionMeta: true,
+  };
+}
+
+export function getServiceKeyBySlug(serviceSlug: string): string | undefined {
+  return Object.entries(GEO_SERVICES).find(([, service]) => service.slug === serviceSlug)?.[0];
+}
 
 interface ServiceGeoPageProps {
   serviceKey: string;
-  regionKey: GeoKey;
+  locationSlug: string;
 }
 
-export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPageProps) {
+export default function ServiceGeoPage({ serviceKey, locationSlug }: ServiceGeoPageProps) {
   const service = GEO_SERVICES[serviceKey];
-  const region = GEO_REGIONS[regionKey];
+  const location = resolveLocationContext(locationSlug);
 
-  if (!service || !region) return null;
+  if (!service || !location) return null;
 
-  const canonical = `/${service.slug}-${regionKey}`;
-  const title = `${service.name} ${region.phrase}`;
-  const metaTitle = `Монтаж ${service.genitive} ${region.phrase} — Freonn`;
-  const description = `Монтаж ${service.genitive} ${region.phrase} для коммерческих и промышленных объектов. Проектирование, монтаж, пусконаладка, гарантия. Бесплатный расчёт.`;
-  const faq = buildFaq(service.name, service.genitive, region.phrase);
+  const canonical = `/${service.slug}-${locationSlug}`;
+  const title = `${service.name} ${location.phrase}`;
+  const metaTitle = `Монтаж ${service.genitive} ${location.phrase} — Freonn`;
+  const description = `Монтаж ${service.genitive} ${location.phrase} для коммерческих и промышленных объектов. Проектирование, монтаж, пусконаладка, гарантия. Бесплатный расчёт.`;
+  const faq = buildFaq(service.name, service.genitive, location.phrase);
 
-  const proofCases = regionKey === "moskva" ? proofCasesMoscow : proofCasesRegion;
   const relatedServiceGeo = Object.entries(GEO_SERVICES)
     .filter(([key]) => key !== serviceKey)
     .map(([, svc]) => ({
-      href: buildServiceGeoPath(svc.slug, regionKey),
-      label: `${svc.name} ${region.phrase}`,
+      href: buildServiceLocationPath(svc.slug, locationSlug),
+      label: `${svc.name} ${location.phrase}`,
     }));
+
+  const moscowLinks =
+    locationSlug !== "moskva" && locationSlug !== "moskovskaya-oblast"
+      ? [
+          { href: buildServiceLocationPath(service.slug, "moskva"), label: `${service.name} в Москве` },
+          { href: buildServiceLocationPath(service.slug, "moskovskaya-oblast"), label: `${service.name} в МО` },
+        ]
+      : [];
 
   useSEO({
     title: metaTitle,
     description,
-    keywords: `монтаж ${service.genitive} ${region.name}, ${service.name.toLowerCase()} ${region.name}, инженерные системы ${region.name}, Freonn`,
+    keywords: `монтаж ${service.genitive} ${location.name}, ${service.name.toLowerCase()} ${location.name}, инженерные системы ${location.name}, Freonn`,
     canonical,
-    omitRegionMeta: regionKey === "moskovskaya-oblast",
+    omitRegionMeta: location.omitRegionMeta,
     breadcrumbs: [
       { name: "Услуги", url: "/uslugi" },
       { name: service.name, url: `/${service.slug}` },
-      { name: region.name, url: canonical },
+      { name: location.name, url: canonical },
     ],
     jsonLd: [
       {
@@ -223,7 +270,7 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
         description,
         url: `https://freonn.ru${canonical}`,
         provider: { "@id": "https://freonn.ru/#organization" },
-        areaServed: { "@type": region.areaType, name: region.name },
+        areaServed: { "@type": location.areaType, name: location.name },
         serviceType: service.name,
       },
       {
@@ -244,7 +291,7 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
       breadcrumb={[
         { label: "Услуги", href: "/uslugi" },
         { label: service.name, href: `/${service.slug}` },
-        { label: region.name },
+        { label: location.name },
       ]}
     >
       <section className="py-14 bg-white">
@@ -252,10 +299,10 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
           <div className="grid lg:grid-cols-2 gap-10 items-start">
             <div>
               <h2 className="font-heading font-bold text-[#0F1340] text-2xl lg:text-3xl mb-4">
-                Монтаж {service.genitive} {region.phrase} под ключ
+                Монтаж {service.genitive} {location.phrase} под ключ
               </h2>
               <p className="text-gray-600 font-body leading-relaxed mb-5">
-                {region.description} Freonn выполняет обследование, проектирование, поставку оборудования, монтаж, пусконаладочные работы и сдачу исполнительной документации.
+                {location.description} Freonn выполняет обследование, проектирование, поставку оборудования, монтаж, пусконаладочные работы и сдачу исполнительной документации.
               </p>
               <div className="grid sm:grid-cols-2 gap-3 mb-7">
                 {service.features.map((item) => (
@@ -300,8 +347,8 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
                     Цены
                   </a>
                 )}
-                <a href="/moskva" className="px-4 py-2 bg-white hover:bg-[#0F1340] hover:text-white text-[#0F1340] rounded-full text-sm font-body transition-colors">
-                  Москва
+                <a href={location.cityHref} className="px-4 py-2 bg-white hover:bg-[#0F1340] hover:text-white text-[#0F1340] rounded-full text-sm font-body transition-colors">
+                  {location.name}
                 </a>
                 <a href="/moskovskaya-oblast" className="px-4 py-2 bg-white hover:bg-[#0F1340] hover:text-white text-[#0F1340] rounded-full text-sm font-body transition-colors">
                   Московская область
@@ -317,10 +364,10 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
           <div className="grid lg:grid-cols-2 gap-10">
             <div>
               <h2 className="font-heading font-bold text-[#0F1340] text-2xl mb-5">
-                {region.coverageTitle}
+                {location.coverageTitle}
               </h2>
               <div className="flex flex-wrap gap-2">
-                {region.coverage.map((item) => (
+                {location.coverage.map((item) => (
                   <span key={item} className="px-4 py-2 bg-white text-[#0F1340] rounded-full text-sm font-body">
                     {item}
                   </span>
@@ -332,7 +379,7 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
                 География рядом
               </h2>
               <div className="flex flex-wrap gap-2">
-                {region.nearby.map((link) => (
+                {location.nearby.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
@@ -350,10 +397,10 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
       <section className="py-12 bg-white">
         <div className="container">
           <h2 className="font-heading font-bold text-[#0F1340] text-2xl mb-6">
-            {regionKey === "moskva" ? "Опыт на объектах Москвы" : "Опыт на объектах Московской области"}
+            {location.proofTitle}
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
-            {proofCases.map((item) => (
+            {location.proofCases.map((item) => (
               <div key={item.title} className="bg-[#F7F8FF] rounded-xl p-5 border border-gray-100">
                 <h3 className="font-heading font-semibold text-[#0F1340] text-base mb-2">{item.title}</h3>
                 <p className="text-gray-600 font-body text-sm leading-relaxed">{item.text}</p>
@@ -371,7 +418,7 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
       <section className="py-10 bg-white">
         <div className="container">
           <h2 className="font-heading font-bold text-[#0F1340] text-xl mb-4">
-            Другие услуги {region.phrase}
+            Другие услуги {location.phrase}
           </h2>
           <div className="flex flex-wrap gap-2">
             {relatedServiceGeo.map((link) => (
@@ -384,6 +431,24 @@ export default function ServiceGeoPage({ serviceKey, regionKey }: ServiceGeoPage
               </a>
             ))}
           </div>
+          {moscowLinks.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <h3 className="font-heading font-semibold text-[#0F1340] text-base mb-3">
+                Основной регион
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {moscowLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="px-4 py-2 bg-white border border-gray-200 hover:bg-[#0F1340] hover:text-white text-[#0F1340] rounded-full text-sm font-body transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

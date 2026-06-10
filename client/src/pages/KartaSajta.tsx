@@ -1,11 +1,13 @@
 /*
- * Карта сайта — /karta-sajta (HTML-обзор основных URL + ссылка на sitemap.xml)
+ * Карта сайта — /karta-sajta (HTML-обзор основных URL + ссылка на sitemap-index.xml)
  */
-import { getKartaSajtaCityLinks, getKartaSajtaServiceGeoLinks } from "@shared/geoRoutes";
+import { getKartaSajtaServiceGeoLinks } from "@shared/geoRoutes";
+import { getKartaSajtaTierCityLinks } from "@shared/geoTiers";
+import { CASE_STUDIES } from "@shared/caseStudies";
 import { useSEO } from "@/hooks/useSEO";
 import PageLayout from "@/components/PageLayout";
 
-const SECTIONS: { title: string; links: { href: string; label: string }[] }[] = [
+const BASE_SECTIONS: { title: string; links: { href: string; label: string }[] }[] = [
   {
     title: "Компания и контакты",
     links: [
@@ -43,14 +45,19 @@ const SECTIONS: { title: string; links: { href: string; label: string }[] }[] = 
       { href: "/obekty", label: "Объекты" },
       { href: "/novosti", label: "Новости" },
       { href: "/akcii", label: "Акции" },
+      { href: "/slovar", label: "Словарь терминов ОВиК" },
+      { href: "/kalkulyator-inzhenernyh-sistem", label: "Калькулятор инженерных систем" },
     ],
   },
   {
-    title: "Москва и Московская область",
-    links: getKartaSajtaCityLinks(),
+    title: "Кейсы",
+    links: CASE_STUDIES.slice(0, 8).map((c) => ({
+      href: `/kejs/${c.slug}`,
+      label: c.title,
+    })),
   },
   {
-    title: "Услуги в Москве и МО",
+    title: "Услуги по городам",
     links: getKartaSajtaServiceGeoLinks(),
   },
   {
@@ -71,10 +78,12 @@ const SECTIONS: { title: string; links: { href: string; label: string }[] }[] = 
 ];
 
 export default function KartaSajtaPage() {
+  const tierCitySections = getKartaSajtaTierCityLinks();
+
   useSEO({
     title: "Карта сайта — Freonn",
     description:
-      "Основные разделы сайта freonn.ru: услуги, цены, блог, контакты, Москва и Московская область. Полный перечень URL в файле sitemap.xml.",
+      "Основные разделы сайта freonn.ru: услуги, цены, блог, контакты, города МО. Полный перечень URL в sitemap-index.xml.",
     canonical: "/karta-sajta",
     breadcrumbs: [{ name: "Карта сайта", url: "/karta-sajta" }],
     jsonLd: {
@@ -95,18 +104,38 @@ export default function KartaSajtaPage() {
         <div className="container max-w-4xl">
           <p className="text-gray-600 font-body mb-10">
             Ниже — основные страницы для быстрой навигации. Полный список URL для поисковых систем:{" "}
-            <a href="/sitemap.xml" className="text-[#B91C1C] font-semibold hover:underline">
-              sitemap.xml
+            <a href="/sitemap-index.xml" className="text-[#B91C1C] font-semibold hover:underline">
+              sitemap-index.xml
             </a>
-            .
+            {" "}(включая{" "}
+            <a href="/sitemap-moscow-core.xml" className="text-[#B91C1C] font-semibold hover:underline">
+              sitemap-moscow-core.xml
+            </a>
+            ).
           </p>
           <div className="grid md:grid-cols-2 gap-10">
-            {SECTIONS.map((block) => (
+            {BASE_SECTIONS.map((block) => (
               <div key={block.title}>
                 <h2 className="font-heading font-bold text-[#0F1340] text-lg mb-4 border-b border-gray-200 pb-2">
                   {block.title}
                 </h2>
                 <ul className="space-y-2 font-body text-sm">
+                  {block.links.map((l) => (
+                    <li key={l.href}>
+                      <a href={l.href} className="text-[#2D3092] hover:text-[#B91C1C] transition-colors">
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            {tierCitySections.map((block) => (
+              <div key={block.title} className="md:col-span-2">
+                <h2 className="font-heading font-bold text-[#0F1340] text-lg mb-4 border-b border-gray-200 pb-2">
+                  {block.title}
+                </h2>
+                <ul className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2 font-body text-sm">
                   {block.links.map((l) => (
                     <li key={l.href}>
                       <a href={l.href} className="text-[#2D3092] hover:text-[#B91C1C] transition-colors">

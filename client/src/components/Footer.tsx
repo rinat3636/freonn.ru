@@ -54,6 +54,9 @@ const footerLinks: Record<string, { label: string; href: string }[]> = {
     { label: "Монтаж вентиляции", href: "/blog/montazh-ventilyacii" },
     { label: "Автоматизация систем", href: "/blog/avtomatizaciya-sistem" },
     { label: "Технический аудит", href: "/blog/tekhnicheskij-audit" },
+    { label: "Словарь терминов ОВиК", href: "/slovar" },
+    { label: "Калькулятор стоимости", href: "/kalkulyator-inzhenernyh-sistem" },
+    { label: "Карта сайта", href: "/karta-sajta" },
   ],
 };
 

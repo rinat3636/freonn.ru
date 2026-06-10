@@ -19,7 +19,11 @@ import ObjectsPage from "./pages/Objects";
 import PricingPage from "./pages/Pricing";
 import ServicePageComponent from "./pages/ServicePage";
 import ObjectCategoryPage from "./pages/ObjectCategory";
-import CityPage from "./pages/CityPage";
+import CaseStudyPage from "./pages/CaseStudyPage";
+import GlossaryPage from "./pages/GlossaryPage";
+import GlossaryTermPage from "./pages/GlossaryTermPage";
+import CalculatorPage from "./pages/CalculatorPage";
+import MatrixLandingPage from "./pages/MatrixLandingPage";
 import NewsPage from "./pages/News";
 import VacanciesPage from "./pages/Vacancies";
 import RequisitesPage from "./pages/Requisites";
@@ -34,7 +38,8 @@ import AppCallback from "./pages/auth/AppCallback";
 import PolitikaKonfidencialnostiPage from "./pages/PolitikaKonfidencialnosti";
 import KartaSajtaPage from "./pages/KartaSajta";
 import ServiceObjectPage, { SERVICES, OBJECT_TYPES } from "./pages/ServiceObjectPage";
-import ServiceGeoPage, { SERVICE_GEO_ROUTES } from "./pages/ServiceGeoPage";
+import { SERVICE_LOCATION_ROUTES } from "@shared/geoRoutes";
+import ServiceGeoPage, { getServiceKeyBySlug } from "./pages/ServiceGeoPage";
 
 function Router() {
   return (
@@ -137,6 +142,14 @@ function Router() {
       <Route path={"/auth/app-callback"} component={AppCallback} />
       <Route path={"/politika-konfidencialnosti"} component={PolitikaKonfidencialnostiPage} />
       <Route path={"/karta-sajta"} component={KartaSajtaPage} />
+      <Route path={"/slovar"} component={GlossaryPage} />
+      <Route path={"/slovar/:slug"}>
+        {(params) => <GlossaryTermPage slug={params.slug || ""} />}
+      </Route>
+      <Route path={"/kalkulyator-inzhenernyh-sistem"} component={CalculatorPage} />
+      <Route path={"/kejs/:slug"}>
+        {(params) => <CaseStudyPage slug={params.slug || ""} />}
+      </Route>
 
       {/* Service × Object matrix landing pages */}
       {Object.keys(SERVICES).flatMap(svc =>
@@ -152,16 +165,20 @@ function Router() {
         })
       )}
 
-      {/* Service × Geo landing pages for Moscow and Moscow region */}
-      {SERVICE_GEO_ROUTES.map((route) => (
-        <Route key={route.path} path={route.path}>
-          {() => <ServiceGeoPage serviceKey={route.serviceKey} regionKey={route.regionKey} />}
-        </Route>
-      ))}
+      {/* Service × City landing pages (352 URL) */}
+      {SERVICE_LOCATION_ROUTES.map((route) => {
+        const serviceKey = getServiceKeyBySlug(route.serviceSlug);
+        if (!serviceKey) return null;
+        return (
+          <Route key={route.path} path={route.path}>
+            {() => <ServiceGeoPage serviceKey={serviceKey} locationSlug={route.locationSlug} />}
+          </Route>
+        );
+      })}
 
-      {/* City pages — MUST be last before 404 */}
-      <Route path={"/:city"}>
-        {(params) => <CityPage city={params.city || ""} />}
+      {/* Matrix landings: 3D, alias×city, price×city, city hubs */}
+      <Route path={"/:matrixSlug"}>
+        {(params) => <MatrixLandingPage slug={params.matrixSlug || ""} />}
       </Route>
 
       <Route path={"/404"} component={NotFound} />

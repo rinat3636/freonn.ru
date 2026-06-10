@@ -1,18 +1,26 @@
 import {
-  GEO_REGIONS_SEO,
   getCityAreaType,
   getCityEntry,
+  getServiceLocationSeoMeta,
   isCityPath,
   NOINDEX_PATHS,
   normalizePathname,
-  parseServiceGeoPath,
+  parseServiceLocationPath,
   SERVICE_SEO,
 } from "../shared/geoRoutes";
+import {
+  getPriceCitySeoMeta,
+  getServiceAliasCitySeoMeta,
+  getServiceObjectCitySeoMeta,
+  shouldNoIndexForSeoPhase,
+} from "../shared/seoMatrix";
 
 export { shouldOmitGeoMeta, NOINDEX_PATHS } from "../shared/geoRoutes";
 
 export function isNoIndexPath(pathname: string): boolean {
-  return NOINDEX_PATHS.has(normalizePathname(pathname));
+  const clean = normalizePathname(pathname);
+  if (NOINDEX_PATHS.has(clean)) return true;
+  return shouldNoIndexForSeoPhase(clean);
 }
 
 function buildServiceGeoFaq(serviceName: string, serviceGenitive: string, regionPhrase: string) {
@@ -56,14 +64,14 @@ export function buildPageJsonLd(pathname: string): object[] | null {
     }];
   }
 
-  const serviceGeo = parseServiceGeoPath(pathname);
-  if (serviceGeo) {
-    const service = SERVICE_SEO[serviceGeo.service as keyof typeof SERVICE_SEO];
-    const region = GEO_REGIONS_SEO[serviceGeo.geo];
-    if (!service || !region) return null;
-    const title = `${service.name} ${region.phrase}`;
-    const description = `Монтаж ${service.genitive} ${region.phrase} для коммерческих и промышленных объектов.`;
-    const faq = buildServiceGeoFaq(service.name, service.genitive, region.phrase);
+  const serviceLocation = parseServiceLocationPath(pathname);
+  if (serviceLocation) {
+    const service = SERVICE_SEO[serviceLocation.service as keyof typeof SERVICE_SEO];
+    const city = getCityEntry(serviceLocation.location);
+    if (!service || !city) return null;
+    const title = `${service.name} ${city.phrase}`;
+    const description = `Монтаж ${service.genitive} ${city.phrase} для коммерческих и промышленных объектов.`;
+    const faq = buildServiceGeoFaq(service.name, service.genitive, city.phrase);
     return [
       {
         "@context": "https://schema.org",
@@ -72,7 +80,7 @@ export function buildPageJsonLd(pathname: string): object[] | null {
         description,
         url,
         provider: { "@id": "https://freonn.ru/#organization" },
-        areaServed: { "@type": region.areaType, name: region.name },
+        areaServed: { "@type": getCityAreaType(serviceLocation.location), name: city.name },
         serviceType: service.name,
       },
       {
@@ -85,6 +93,18 @@ export function buildPageJsonLd(pathname: string): object[] | null {
         })),
       },
     ];
+  }
+
+  const socMeta = getServiceObjectCitySeoMeta(pathname);
+  if (socMeta) {
+    return [{
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: socMeta.title.replace(" — Freonn", ""),
+      description: socMeta.description,
+      url,
+      provider: { "@id": "https://freonn.ru/#organization" },
+    }];
   }
 
   if (clean === "/contacts") {
@@ -147,14 +167,10 @@ export function getCitySeoMeta(slug: string) {
 }
 
 export function getServiceGeoSeoMeta(pathname: string) {
-  const parsed = parseServiceGeoPath(pathname);
-  if (!parsed) return null;
-  const service = SERVICE_SEO[parsed.service as keyof typeof SERVICE_SEO];
-  const region = GEO_REGIONS_SEO[parsed.geo];
-  if (!service || !region) return null;
-  return {
-    title: `Монтаж ${service.genitive} ${region.phrase} — Freonn`,
-    description: `${service.name} ${region.phrase} для коммерческих и промышленных объектов. Проектирование, монтаж, пусконаладка и гарантия.`,
-    keywords: `монтаж ${service.genitive} ${region.name}, ${service.name.toLowerCase()} ${region.name}, Freonn`,
-  };
+  return (
+    getServiceLocationSeoMeta(pathname) ||
+    getServiceObjectCitySeoMeta(pathname) ||
+    getServiceAliasCitySeoMeta(pathname) ||
+    getPriceCitySeoMeta(pathname)
+  );
 }

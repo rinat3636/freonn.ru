@@ -119,4 +119,4 @@ Disallow: /wp-includes/
 Disallow: /wp-json/
 
 # Sitemap
-Sitemap: https://freonn.ru/sitemap.xml
+Sitemap: https://freonn.ru/sitemap-index.xml

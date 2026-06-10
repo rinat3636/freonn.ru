@@ -61,6 +61,31 @@ export const CITIES: CityEntry[] = [
   { slug: "zelenograd", name: "Зеленоград", phrase: "в Зеленограде" },
   { slug: "troitsk", name: "Троицк", phrase: "в Троицке" },
   { slug: "shcherbinka", name: "Щербинка", phrase: "в Щербинке" },
+  { slug: "vidnoye", name: "Видное", phrase: "в Видном" },
+  { slug: "reutov", name: "Реутов", phrase: "в Реутове" },
+  { slug: "kotelniki", name: "Котельники", phrase: "в Котельниках" },
+  { slug: "lytkarino", name: "Лыткарино", phrase: "в Лыткарино" },
+  { slug: "fryazino", name: "Фрязино", phrase: "во Фрязино" },
+  { slug: "ivanteevka", name: "Ивантеевка", phrase: "в Ивантеевке" },
+  { slug: "krasnoarmeysk", name: "Красноармейск", phrase: "в Красноармейске" },
+  { slug: "hotkovo", name: "Хотьково", phrase: "в Хотькове" },
+  { slug: "pushchino", name: "Пущино", phrase: "в Пущино" },
+  { slug: "chernogolovka", name: "Черноголовка", phrase: "в Черноголовке" },
+  { slug: "zvenigorod", name: "Звенигород", phrase: "в Звенигороде" },
+  { slug: "kubinka", name: "Кубинка", phrase: "в Кубинке" },
+  { slug: "aprelevka", name: "Апрелевка", phrase: "в Апрелевке" },
+  { slug: "bronnitsy", name: "Бронницы", phrase: "в Бронницах" },
+  { slug: "egorevsk", name: "Егорьевск", phrase: "в Егорьевске" },
+  { slug: "ozery", name: "Озёры", phrase: "в Озёрах" },
+  { slug: "pavlovsky-posad", name: "Павловский Посад", phrase: "в Павловском Посаде" },
+  { slug: "roshal", name: "Рошаль", phrase: "в Рошале" },
+  { slug: "shatura", name: "Шатура", phrase: "в Шатуре" },
+  { slug: "vereya", name: "Верея", phrase: "в Верее" },
+  { slug: "yakhroma", name: "Яхрома", phrase: "в Яхроме" },
+  { slug: "staraya-kupavna", name: "Старая Купавна", phrase: "в Старой Купавне" },
+  { slug: "elektrogorsk", name: "Электрогорск", phrase: "в Электрогорске" },
+  { slug: "likino-dulevo", name: "Ликино-Дулёво", phrase: "в Ликино-Дулёво" },
+  { slug: "krasnozavodsk", name: "Краснозаводск", phrase: "в Краснозаводске" },
 ];
 
 export const CITY_BY_SLUG = Object.fromEntries(CITIES.map((city) => [city.slug, city])) as Record<
@@ -115,11 +140,32 @@ export const SERVICE_OBJECT_PATHS = new Set(
   SERVICE_SLUGS.flatMap((service) => OBJECT_SLUGS.map((object) => `/${service}-${object}`))
 );
 
-export const SERVICE_GEO_PATHS = new Set(
-  SERVICE_SLUGS.flatMap((service) => GEO_SLUGS.map((geo) => `/${service}-${geo}`))
+/** Все landing-страницы «услуга × город/регион»: /ventilyaciya-khimki, /otoplenie-moskva и т.д. */
+export const SERVICE_LOCATION_PATHS = new Set(
+  SERVICE_SLUGS.flatMap((service) => CITIES.map((city) => `/${service}-${city.slug}`))
 );
 
-const BLOG_SLUGS = new Set([
+/** @deprecated Используйте SERVICE_LOCATION_PATHS */
+export const SERVICE_GEO_PATHS = SERVICE_LOCATION_PATHS;
+
+export interface ServiceLocationRoute {
+  path: string;
+  serviceSlug: string;
+  locationSlug: string;
+}
+
+export const SERVICE_LOCATION_ROUTES: ServiceLocationRoute[] = SERVICE_SLUGS.flatMap((serviceSlug) =>
+  CITIES.map((city) => ({
+    path: `/${serviceSlug}-${city.slug}`,
+    serviceSlug,
+    locationSlug: city.slug,
+  }))
+);
+
+/** Slug-ы локаций для парсинга URL (длинные первыми — naro-fominsk, moskovskaya-oblast) */
+const LOCATION_SLUGS_BY_LENGTH = [...CITIES.map((c) => c.slug)].sort((a, b) => b.length - a.length);
+
+export const BLOG_SLUGS = new Set([
   "montazh-teplovyh-punktov", "avtomatizaciya-sistem", "tekhnicheskij-audit",
   "montazh-ventilyacii", "kkb-dlya-pritochnoj-ustanovki", "ventilyaciya-v-shkole",
   "kondicionirovanie-kinoteatra", "ventilyaciya-medicinskih-uchrezhdenij",
@@ -134,7 +180,7 @@ const BLOG_SLUGS = new Set([
   "avtomatika-ventilyacii",
 ]);
 
-const PRICING_SLUGS = new Set([
+export const PRICING_SLUGS = new Set([
   "ventilyaciya", "kondicionirovanie", "dymoudalenie", "peskostruj", "kompleks",
 ]);
 
@@ -155,6 +201,7 @@ export const VALID_STATIC_PATHS = new Set([
   "/spasibo", "/404",
   "/auth/login", "/auth/app-callback",
   "/politika-konfidencialnosti", "/karta-sajta",
+  "/slovar", "/kalkulyator-inzhenernyh-sistem",
 ]);
 
 export const NOINDEX_PATHS = new Set([
@@ -199,51 +246,65 @@ export function buildServiceGeoPath(serviceSlug: string, geo: GeoSlug): string {
   return `/${serviceSlug}-${geo}`;
 }
 
+export function buildServiceLocationPath(serviceSlug: string, locationSlug: string): string {
+  return `/${serviceSlug}-${locationSlug}`;
+}
+
 export function isCityPath(pathname: string): boolean {
   const clean = normalizePathname(pathname);
   const segments = clean.split("/").filter(Boolean);
   return segments.length === 1 && KNOWN_CITY_SLUGS.has(segments[0]);
 }
 
-export function parseServiceGeoPath(pathname: string): { service: string; geo: GeoSlug } | null {
+export function parseServiceLocationPath(
+  pathname: string
+): { service: string; location: string } | null {
   const clean = normalizePathname(pathname);
-  if (!SERVICE_GEO_PATHS.has(clean)) return null;
-  for (const geo of GEO_SLUGS) {
-    if (clean.endsWith(`-${geo}`)) {
-      return { service: clean.slice(1, clean.length - geo.length - 1), geo };
+  if (!SERVICE_LOCATION_PATHS.has(clean)) return null;
+  for (const location of LOCATION_SLUGS_BY_LENGTH) {
+    if (clean.endsWith(`-${location}`)) {
+      const service = clean.slice(1, clean.length - location.length - 1);
+      if (service in SERVICE_SEO) {
+        return { service, location };
+      }
     }
   }
   return null;
 }
 
-export function isValidSpaPath(pathname: string): boolean {
-  const clean = normalizePathname(pathname);
-
-  if (VALID_STATIC_PATHS.has(clean)) return true;
-
-  if (clean.startsWith("/blog/")) {
-    return BLOG_SLUGS.has(clean.slice("/blog/".length));
-  }
-
-  if (clean.startsWith("/ceny/")) {
-    return PRICING_SLUGS.has(clean.slice("/ceny/".length));
-  }
-
-  const segments = clean.split("/").filter(Boolean);
-  if (segments.length !== 1) return false;
-
-  const slug = segments[0];
-  if (KNOWN_CITY_SLUGS.has(slug)) return true;
-  if (SERVICE_OBJECT_PATHS.has(clean)) return true;
-  if (SERVICE_GEO_PATHS.has(clean)) return true;
-
-  return false;
+/** @deprecated Используйте parseServiceLocationPath */
+export function parseServiceGeoPath(pathname: string): { service: string; geo: GeoSlug } | null {
+  const parsed = parseServiceLocationPath(pathname);
+  if (!parsed || !GEO_SLUGS.includes(parsed.location as GeoSlug)) return null;
+  return { service: parsed.service, geo: parsed.location as GeoSlug };
 }
 
 export function shouldOmitGeoMeta(pathname: string): boolean {
   if (isCityPath(pathname)) return true;
-  const parsed = parseServiceGeoPath(pathname);
-  return parsed?.geo === "moskovskaya-oblast";
+  return parseServiceLocationPath(pathname) !== null;
+}
+
+export function getServiceLocationSeoMeta(pathname: string) {
+  const parsed = parseServiceLocationPath(pathname);
+  if (!parsed) return null;
+  const service = SERVICE_SEO[parsed.service as keyof typeof SERVICE_SEO];
+  const city = getCityEntry(parsed.location);
+  if (!service || !city) return null;
+  return {
+    title: `Монтаж ${service.genitive} ${city.phrase} — Freonn`,
+    description: `${service.name} ${city.phrase} для коммерческих и промышленных объектов. Проектирование, монтаж, пусконаладка и гарантия.`,
+    keywords: `монтаж ${service.genitive} ${city.name}, ${service.name.toLowerCase()} ${city.name}, Freonn`,
+  };
+}
+
+export function getNearbyCityLinks(currentSlug: string, limit = 5): NavLink[] {
+  const slugs = FOOTER_CITY_SLUGS.filter((s) => s !== currentSlug && s !== "moskovskaya-oblast");
+  const idx = FOOTER_CITY_SLUGS.indexOf(currentSlug as (typeof FOOTER_CITY_SLUGS)[number]);
+  const start = idx >= 0 ? Math.max(0, idx - 2) : 0;
+  return slugs.slice(start, start + limit).map((slug) => ({
+    href: `/${slug}`,
+    label: CITY_BY_SLUG[slug].name,
+  }));
 }
 
 export function getFooterCityLinks(): NavLink[] {
@@ -254,11 +315,13 @@ export function getFooterCityLinks(): NavLink[] {
 }
 
 export function getFooterServiceGeoLinks(): NavLink[] {
-  return SERVICE_SLUGS.flatMap((serviceSlug) => {
+  const priorityServices = ["ventilyaciya", "kondicionirovanie", "dymoudalenie", "otoplenie"] as const;
+  const priorityCities = ["moskva", "khimki", "krasnogorsk", "odintsovo"] as const;
+  return priorityServices.flatMap((serviceSlug) => {
     const service = SERVICE_SEO[serviceSlug];
-    return GEO_SLUGS.map((geo) => ({
-      href: buildServiceGeoPath(serviceSlug, geo),
-      label: `${service.name} ${GEO_REGIONS_SEO[geo].shortLabel}`,
+    return priorityCities.map((citySlug) => ({
+      href: buildServiceLocationPath(serviceSlug, citySlug),
+      label: `${service.name} ${CITY_BY_SLUG[citySlug].phrase}`,
     }));
   });
 }
@@ -271,13 +334,27 @@ export function getKartaSajtaCityLinks(): NavLink[] {
 }
 
 export function getKartaSajtaServiceGeoLinks(): NavLink[] {
-  return SERVICE_SLUGS.flatMap((serviceSlug) => {
-    const service = SERVICE_SEO[serviceSlug];
-    return GEO_SLUGS.map((geo) => ({
-      href: buildServiceGeoPath(serviceSlug, geo),
-      label: `${service.name} ${GEO_REGIONS_SEO[geo].phrase}`,
+  const featured = [
+    { service: "ventilyaciya" as const, cities: ["moskva", "khimki", "krasnogorsk", "odintsovo"] as const },
+    { service: "kondicionirovanie" as const, cities: ["moskva", "podolsk", "balashikha", "domodedovo"] as const },
+    { service: "dymoudalenie" as const, cities: ["moskva", "mytishchi", "lyubertsy", "korolev"] as const },
+  ];
+  return featured.flatMap(({ service, cities }) => {
+    const svc = SERVICE_SEO[service];
+    return cities.map((citySlug) => ({
+      href: buildServiceLocationPath(service, citySlug),
+      label: `${svc.name} ${CITY_BY_SLUG[citySlug].phrase}`,
     }));
   });
+}
+
+/** Экспорт для генерации sitemap.xml */
+export function getBlogSlugs(): string[] {
+  return Array.from(BLOG_SLUGS);
+}
+
+export function getPricingSlugs(): string[] {
+  return Array.from(PRICING_SLUGS);
 }
 
 export function getCityAreaType(slug: string): "City" | "AdministrativeArea" {

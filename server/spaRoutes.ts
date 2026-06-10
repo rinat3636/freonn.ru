@@ -1,10 +1,10 @@
 /**
  * Re-export маршрутов из shared — единый источник для сервера и клиента.
  */
+export { isValidSpaPath } from "../shared/spaPaths";
 export {
   isCityPath,
   isKnownCitySlug,
-  isValidSpaPath,
   normalizePathname,
   parseServiceGeoPath,
   shouldOmitGeoMeta,

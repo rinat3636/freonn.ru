@@ -119,7 +119,7 @@ const NOINDEX_PAGE_SEO: Record<string, ServerSeoMeta> = {
   },
 };
 
-function getServerSeo(pathname: string, status: number) {
+function getServerSeo(pathname: string, status: number): ServerSeoMeta | null {
   if (status === 404) {
     return {
       title: "Страница не найдена — Freonn",

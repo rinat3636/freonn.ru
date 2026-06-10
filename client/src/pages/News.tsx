@@ -16,6 +16,7 @@ const news = [
     title: "Завершён монтаж инженерных систем в БЦ «Aero City»",
     excerpt: "Команда Freonn успешно завершила монтаж систем вентиляции и кондиционирования в бизнес-центре «Aero City» площадью 5 200 м². Проект реализован в срок, заказчик принял объект без замечаний.",
     img: `${CDN}/freonn-commercial-ac-25u7KoLKzpAUCxypUsYPv5.webp`,
+    href: "/kejs/aero-city-moskva",
   },
   {
     date: "2 февраля 2025",
@@ -97,6 +98,13 @@ export default function NewsPage() {
       description: "Последние новости инженерной компании Freonn.",
       url: "https://freonn.ru/novosti",
       publisher: { "@id": "https://freonn.ru/#organization" },
+      blogPost: news.slice(0, 5).map((item, i) => ({
+        "@type": "BlogPosting",
+        headline: item.title,
+        description: item.excerpt,
+        datePublished: item.date,
+        url: item.href ? `https://freonn.ru${item.href}` : `https://freonn.ru/novosti#post-${i}`,
+      })),
     },
   });
   return (
@@ -107,7 +115,42 @@ export default function NewsPage() {
       <section className="py-16 bg-white">
         <div className="container">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {news.map((item, i) => (
+            {news.map((item, i) => {
+              const card = (
+                <>
+                  <div className="aspect-[16/9] overflow-hidden">
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-body font-medium ${categoryColors[item.category] || "bg-gray-100 text-gray-600"}`}>
+                        {item.category}
+                      </span>
+                      <span className="flex items-center gap-1 text-gray-400 text-xs font-body">
+                        <Calendar size={12} /> {item.date}
+                      </span>
+                    </div>
+                    <h2 className="font-heading font-semibold text-[#0F1340] text-sm leading-snug mb-2 group-hover:text-[#2D3092] transition-colors line-clamp-2">
+                      {item.title}
+                    </h2>
+                    <p className="text-gray-500 text-xs font-body leading-relaxed line-clamp-3">
+                      {item.excerpt}
+                    </p>
+                    {"href" in item && item.href ? (
+                      <span className="inline-flex items-center gap-1 mt-3 text-[#2D3092] text-xs font-body font-medium">
+                        Подробнее <ArrowRight size={12} />
+                      </span>
+                    ) : null}
+                  </div>
+                </>
+              );
+
+              return (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -115,32 +158,14 @@ export default function NewsPage() {
                 transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="group bg-white border border-gray-100 hover:border-[#2D3092]/30 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden"
               >
-                <div className="aspect-[16/9] overflow-hidden">
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-body font-medium ${categoryColors[item.category] || "bg-gray-100 text-gray-600"}`}>
-                      {item.category}
-                    </span>
-                    <span className="flex items-center gap-1 text-gray-400 text-xs font-body">
-                      <Calendar size={12} /> {item.date}
-                    </span>
-                  </div>
-                  <h2 className="font-heading font-semibold text-[#0F1340] text-sm leading-snug mb-2 group-hover:text-[#2D3092] transition-colors line-clamp-2">
-                    {item.title}
-                  </h2>
-                  <p className="text-gray-500 text-xs font-body leading-relaxed line-clamp-3">
-                    {item.excerpt}
-                  </p>
-                </div>
+                {"href" in item && item.href ? (
+                  <a href={item.href} className="block">{card}</a>
+                ) : (
+                  card
+                )}
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
