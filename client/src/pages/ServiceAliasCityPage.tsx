@@ -2,7 +2,8 @@ import PageLayout from "@/components/PageLayout";
 import ContactSection from "@/components/ContactSection";
 import { useSEO } from "@/hooks/useSEO";
 import { ymGoal } from "@/lib/ym";
-import { getCityEntry, getCityAreaType, buildServiceLocationPath } from "@shared/geoRoutes";
+import { getCityEntry, getCityAreaType, buildServiceLocationPath, SERVICE_SEO } from "@shared/geoRoutes";
+import { getAliasCityParagraph } from "@shared/cityContent";
 import {
   buildServiceAliasCityPath,
   SERVICE_ALIASES,
@@ -22,6 +23,7 @@ export default function ServiceAliasCityPage({ aliasSlug, citySlug }: ServiceAli
 
   const canonical = buildServiceAliasCityPath(aliasSlug, citySlug);
   const title = `${alias.name} ${city.phrase}`;
+  const bodyText = getAliasCityParagraph(alias.name, city.phrase, citySlug, city.name);
 
   useSEO({
     title: `${title} — Freonn`,
@@ -55,9 +57,13 @@ export default function ServiceAliasCityPage({ aliasSlug, citySlug }: ServiceAli
     >
       <section className="py-14 bg-white">
         <div className="container max-w-3xl">
+          <p className="text-gray-600 font-body leading-relaxed mb-4">{bodyText}</p>
           <p className="text-gray-600 font-body leading-relaxed mb-6">
-            {alias.name} {city.phrase} — полный цикл работ Freonn: обследование объекта, проектирование,
-            монтаж, пусконаладка и передача исполнительной документации.
+            Связанная услуга —{" "}
+            <a href={buildServiceLocationPath(alias.serviceSlug, citySlug)} className="text-[#2D3092] font-semibold hover:underline">
+              {SERVICE_SEO[alias.serviceSlug as keyof typeof SERVICE_SEO]?.name} {city.phrase}
+            </a>
+            . Передаём исполнительную документацию, акты и паспорта оборудования после сдачи объекта.
           </p>
           <div className="flex flex-wrap gap-2 mb-8">
             <a href={buildServiceLocationPath(alias.serviceSlug, citySlug)} className="px-4 py-2 bg-[#F7F8FF] rounded-full text-sm">

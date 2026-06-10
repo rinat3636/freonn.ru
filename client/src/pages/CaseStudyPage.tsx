@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { useSEO } from "@/hooks/useSEO";
 import { CASE_STUDY_BY_SLUG } from "@shared/caseStudies";
 import { buildServiceLocationPath, SERVICE_SEO } from "@shared/geoRoutes";
+import { shouldNoIndexForSeoPhase } from "@shared/seoMatrix";
 import { ArrowRight } from "lucide-react";
 
 export default function CaseStudyPage({ slug }: { slug: string }) {
@@ -16,6 +17,7 @@ export default function CaseStudyPage({ slug }: { slug: string }) {
     title: `${study.title} — кейс Freonn`,
     description: study.summary,
     canonical,
+    noIndex: shouldNoIndexForSeoPhase(canonical),
     breadcrumbs: [
       { name: "Объекты", url: "/obekty" },
       { name: study.title, url: canonical },

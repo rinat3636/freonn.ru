@@ -16,8 +16,6 @@ import { getCityContent } from "@shared/cityContent";
 import { getCityTier, isMatrixCity } from "@shared/geoTiers";
 import { getCity3dLinks, getCityServiceLinks } from "@shared/seoMatrix";
 import { useSEO } from "@/hooks/useSEO";
-import { useAICityContent } from "@/hooks/useAICityContent";
-import { useAISEO } from "@/hooks/useAISEO";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, MapPin, Clock, Phone, Wind, Thermometer, Flame, Snowflake, ShieldAlert, Droplets, Zap, Hammer } from "lucide-react";
 
@@ -111,6 +109,32 @@ const geoCaseLinks = [
 
 const getCityData = (city: string, cityName: string) => getCityContent(city, cityName);
 
+function getCityPageMeta(city: string, cityName: string, cityIn: string) {
+  if (city === "moskva") {
+    return {
+      title: "Монтаж инженерных систем в Москве — Freonn",
+      description:
+        "Проектирование и монтаж вентиляции, кондиционирования, дымоудаления и отопления в Москве. Бизнес-центры, ТЦ, склады, производства. Выезд инженера, гарантия 1 год.",
+      keywords:
+        "монтаж вентиляции Москва, кондиционирование Москва, инженерные системы Москва, дымоудаление Москва, Freonn",
+    };
+  }
+  if (city === "moskovskaya-oblast") {
+    return {
+      title: "Монтаж инженерных систем в Московской области — Freonn",
+      description:
+        "Проектирование и монтаж инженерных систем по всей Московской области: вентиляция, кондиционирование, дымоудаление, отопление. 1280+ объектов, выезд инженера.",
+      keywords:
+        "монтаж вентиляции Московская область, кондиционирование МО, инженерные системы Подмосковье, Freonn",
+    };
+  }
+  return {
+    title: `Монтаж инженерных систем ${cityIn} — Freonn`,
+    description: `Проектирование и монтаж инженерных систем ${cityIn}: вентиляция, кондиционирование, дымоудаление, отопление. Бесплатный выезд инженера, гарантия 1 год.`,
+    keywords: `монтаж вентиляции ${cityName}, кондиционирование ${cityName}, инженерные системы ${cityName}, дымоудаление ${cityName}, отопление ${cityName}`,
+  };
+}
+
 const moscowHubContent = {
   moskva: {
     servicesTitle: "Инженерные системы для объектов Москвы",
@@ -145,25 +169,13 @@ export default function CityPage({ city }: CityPageProps) {
   const staticCityData = getCityData(city, cityName);
   const cityTier = getCityTier(city);
   const city3dLinks = getCity3dLinks(city);
-
-  // AI-генерация уникального LSI-контента для города (с fallback на статику)
-  const aiCityContent = useAICityContent(city, cityName, staticCityData);
-  const cityData = aiCityContent;
-
-  // AI-генерация мета-тегов (с fallback на статику)
-  const aiMeta = useAISEO({
-    type: "city",
-    fallbackTitle: `Монтаж вентиляции и кондиционирования ${cityIn} — Freonn`,
-    fallbackDescription: `Проектирование и монтаж инженерных систем ${cityIn}: вентиляция, кондиционирование, дымоудаление, отопление. Бесплатный выезд инженера, гарантия 1 год.`,
-    fallbackKeywords: `монтаж вентиляции ${cityName}, кондиционирование ${cityName}, инженерные системы ${cityName}, дымоудаление ${cityName}, отопление ${cityName}`,
-    data: { cityName },
-    cacheKey: `city_${city}`,
-  });
+  const cityData = staticCityData;
+  const pageMeta = getCityPageMeta(city, cityName, cityIn);
 
   useSEO({
-    title: aiMeta.title,
-    description: aiMeta.description,
-    keywords: aiMeta.keywords,
+    title: pageMeta.title,
+    description: pageMeta.description,
+    keywords: pageMeta.keywords,
     canonical: `/${city}`,
     omitRegionMeta: true,
     breadcrumbs: [{ name: cityName, url: `/${city}` }],
@@ -448,25 +460,6 @@ export default function CityPage({ city }: CityPageProps) {
           </div>
         </div>
       </section>
-
-      {/* AI FAQ Section — показывается если AI вернул FAQ */}
-      {aiCityContent.faq && aiCityContent.faq.length > 0 && (
-        <section className="py-14 bg-[#F7F8FF]">
-          <div className="container max-w-3xl">
-            <h2 className="font-heading font-bold text-[#0F1340] text-2xl mb-8">
-              Часто задаваемые вопросы — {cityName}
-            </h2>
-            <div className="space-y-4">
-              {aiCityContent.faq.map((item, i) => (
-                <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
-                  <h3 className="font-heading font-semibold text-[#0F1340] text-base mb-2">{item.q}</h3>
-                  <p className="text-gray-600 font-body text-sm leading-relaxed">{item.a}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* CTA */}
       <section className="py-12 bg-[#0F1340] text-white">

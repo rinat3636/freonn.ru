@@ -16,7 +16,7 @@ import {
   shouldNoIndexForSeoPhase,
   type ObjectSlug,
 } from "@shared/seoMatrix";
-import { getObjectCityBullets, getObjectCityExtra } from "@shared/cityContent";
+import { getObjectCityBullets, getObjectCityExtra, getCityContent } from "@shared/cityContent";
 import { getCityTier, getTier1NearbyLinks } from "@shared/geoTiers";
 import { ArrowRight, CheckCircle, Phone } from "lucide-react";
 
@@ -71,6 +71,7 @@ export default function ServiceObjectCityPage({
       : getNearbyCityLinks(citySlug, 3);
   const objectExtra = getObjectCityExtra(objectSlug, city.name, city.phrase);
   const objectBullets = getObjectCityBullets(objectSlug);
+  const cityContent = getCityContent(citySlug, city.name);
 
   return (
     <PageLayout
@@ -119,6 +120,19 @@ export default function ServiceObjectCityPage({
               <Phone size={16} /> 8(800)101-2009
             </a>
           </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-[#F7F8FF] border-t border-gray-100">
+        <div className="container max-w-4xl">
+          <h2 className="font-heading font-bold text-[#0F1340] text-xl mb-4">
+            {service.name} {object.namePrep} {city.phrase}
+          </h2>
+          <p className="text-gray-600 font-body leading-relaxed mb-4">{cityContent.lsi}</p>
+          <p className="text-gray-600 font-body leading-relaxed">
+            Типовые объекты {city.phrase}: {cityContent.objects}. Freonn проектирует решения под конкретный режим работы
+            {object.nameGen} с учётом норм, нагрузок и требований заказчика.
+          </p>
         </div>
       </section>
 

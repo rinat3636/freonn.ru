@@ -14,6 +14,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "seo:sitemap": "tsx scripts/generate-sitemap.ts",
+    "seo:phase": "tsx scripts/set-seo-phase.ts",
     "seo:service-city": "tsx scripts/generate-service-city-seo.ts",
     "seo:keywords": "tsx scripts/cluster-keywords.ts",
     "db:push": "drizzle-kit generate && drizzle-kit migrate"

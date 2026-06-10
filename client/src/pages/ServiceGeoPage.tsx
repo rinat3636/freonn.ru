@@ -157,18 +157,18 @@ const proofCasesRegion = [
   },
 ];
 
-function buildFaq(serviceName: string, serviceGenitive: string, regionPhrase: string) {
-  return [
+function buildFaq(serviceName: string, serviceGenitive: string, regionPhrase: string, cityName: string, cityTier: 0 | 1 | 2) {
+  const faq = [
     {
       q: `Сколько стоит монтаж ${serviceGenitive} ${regionPhrase}?`,
       a: "Стоимость зависит от площади, мощности оборудования, трассировки, высоты потолков и требований к автоматике. Точный расчёт готовим после обследования объекта.",
     },
     {
-      q: "Выезжает ли инженер на объект?",
-      a: "Да, инженер Freonn выезжает на объект, собирает исходные данные, оценивает технические ограничения и готовит решение для сметы.",
+      q: `Выезжает ли инженер Freonn ${regionPhrase}?`,
+      a: `Да, инженер Freonn выезжает на объект ${regionPhrase}, собирает исходные данные, оценивает технические ограничения и готовит решение для сметы.`,
     },
     {
-      q: `Какие объекты вы берёте для услуги «${serviceName}»?`,
+      q: `Какие объекты вы берёте для услуги «${serviceName}» ${regionPhrase}?`,
       a: "Работаем с коммерческими, промышленными и социальными объектами от 500 м²: офисами, складами, производствами, ТЦ, школами, клиниками и спортобъектами.",
     },
     {
@@ -176,6 +176,15 @@ function buildFaq(serviceName: string, serviceGenitive: string, regionPhrase: st
       a: "Передаём исполнительную документацию, акты, паспорта оборудования и документы по пусконаладке. Состав зависит от проекта и требований заказчика.",
     },
   ];
+
+  if (cityTier === 2) {
+    faq.unshift({
+      q: `Работаете ли вы ${regionPhrase} и в других городах МО?`,
+      a: `Да, Freonn выполняет монтаж ${serviceGenitive} ${regionPhrase} и по всей Московской области. Для крупных проектов также работаем в Москве и ключевых городах Подмосковья.`,
+    });
+  }
+
+  return faq;
 }
 
 function resolveLocationContext(locationSlug: string) {
@@ -234,7 +243,7 @@ export default function ServiceGeoPage({ serviceKey, locationSlug }: ServiceGeoP
   const title = `${service.name} ${location.phrase}`;
   const metaTitle = `Монтаж ${service.genitive} ${location.phrase} — Freonn`;
   const description = `Монтаж ${service.genitive} ${location.phrase} для коммерческих и промышленных объектов. Проектирование, монтаж, пусконаладка, гарантия. Бесплатный расчёт.`;
-  const faq = buildFaq(service.name, service.genitive, location.phrase);
+  const faq = buildFaq(service.name, service.genitive, location.phrase, location.name, getCityTier(locationSlug));
 
   const relatedServiceGeo = Object.entries(GEO_SERVICES)
     .filter(([key]) => key !== serviceKey)

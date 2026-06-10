@@ -8,10 +8,12 @@ import {
   parseServiceLocationPath,
   SERVICE_SEO,
 } from "../shared/geoRoutes";
+import { getCityTier } from "../shared/geoTiers";
 import {
   getPriceCitySeoMeta,
   getServiceAliasCitySeoMeta,
   getServiceObjectCitySeoMeta,
+  parseServiceObjectCityPath,
   shouldNoIndexForSeoPhase,
 } from "../shared/seoMatrix";
 
@@ -23,18 +25,24 @@ export function isNoIndexPath(pathname: string): boolean {
   return shouldNoIndexForSeoPhase(clean);
 }
 
-function buildServiceGeoFaq(serviceName: string, serviceGenitive: string, regionPhrase: string) {
-  return [
+function buildServiceGeoFaq(
+  serviceName: string,
+  serviceGenitive: string,
+  regionPhrase: string,
+  cityName: string,
+  cityTier: 0 | 1 | 2
+) {
+  const faq = [
     {
       q: `Сколько стоит монтаж ${serviceGenitive} ${regionPhrase}?`,
       a: "Стоимость зависит от площади, мощности оборудования, трассировки, высоты потолков и требований к автоматике. Точный расчёт готовим после обследования объекта.",
     },
     {
-      q: "Выезжает ли инженер на объект?",
-      a: "Да, инженер Freonn выезжает на объект, собирает исходные данные, оценивает технические ограничения и готовит решение для сметы.",
+      q: `Выезжает ли инженер Freonn ${regionPhrase}?`,
+      a: `Да, инженер Freonn выезжает на объект ${regionPhrase}, собирает исходные данные, оценивает технические ограничения и готовит решение для сметы.`,
     },
     {
-      q: `Какие объекты вы берёте для услуги «${serviceName}»?`,
+      q: `Какие объекты вы берёте для услуги «${serviceName}» ${regionPhrase}?`,
       a: "Работаем с коммерческими, промышленными и социальными объектами от 500 м²: офисами, складами, производствами, ТЦ, школами, клиниками и спортобъектами.",
     },
     {
@@ -42,6 +50,20 @@ function buildServiceGeoFaq(serviceName: string, serviceGenitive: string, region
       a: "Передаём исполнительную документацию, акты, паспорта оборудования и документы по пусконаладке. Состав зависит от проекта и требований заказчика.",
     },
   ];
+
+  if (cityTier === 2) {
+    faq.unshift({
+      q: `Работаете ли вы ${regionPhrase} и в других городах МО?`,
+      a: `Да, Freonn выполняет монтаж ${serviceGenitive} ${regionPhrase} и по всей Московской области. Для крупных проектов также работаем в Москве и ключевых городах Подмосковья.`,
+    });
+  } else if (cityTier === 0 && cityName === "Москва") {
+    faq.unshift({
+      q: "Работаете ли вы по всей Москве?",
+      a: "Да, Freonn выполняет монтаж инженерных систем во всех административных округах Москвы и на объектах в пределах МКАД, ТТК и за МКАД.",
+    });
+  }
+
+  return faq;
 }
 
 export function buildPageJsonLd(pathname: string): object[] | null {
@@ -71,7 +93,8 @@ export function buildPageJsonLd(pathname: string): object[] | null {
     if (!service || !city) return null;
     const title = `${service.name} ${city.phrase}`;
     const description = `Монтаж ${service.genitive} ${city.phrase} для коммерческих и промышленных объектов.`;
-    const faq = buildServiceGeoFaq(service.name, service.genitive, city.phrase);
+    const cityTier = getCityTier(serviceLocation.location);
+    const faq = buildServiceGeoFaq(service.name, service.genitive, city.phrase, city.name, cityTier);
     return [
       {
         "@context": "https://schema.org",
@@ -95,8 +118,10 @@ export function buildPageJsonLd(pathname: string): object[] | null {
     ];
   }
 
+  const socParsed = parseServiceObjectCityPath(pathname);
   const socMeta = getServiceObjectCitySeoMeta(pathname);
-  if (socMeta) {
+  if (socMeta && socParsed) {
+    const city = getCityEntry(socParsed.city);
     return [{
       "@context": "https://schema.org",
       "@type": "Service",
@@ -104,6 +129,9 @@ export function buildPageJsonLd(pathname: string): object[] | null {
       description: socMeta.description,
       url,
       provider: { "@id": "https://freonn.ru/#organization" },
+      areaServed: city
+        ? { "@type": getCityAreaType(socParsed.city), name: city.name }
+        : undefined,
     }];
   }
 
@@ -159,6 +187,27 @@ export function injectPageJsonLd(html: string, schemas: object[]): string {
 export function getCitySeoMeta(slug: string) {
   const city = getCityEntry(slug);
   if (!city) return null;
+
+  if (slug === "moskva") {
+    return {
+      title: "Монтаж инженерных систем в Москве — Freonn",
+      description:
+        "Проектирование и монтаж вентиляции, кондиционирования, дымоудаления и отопления в Москве. Бизнес-центры, ТЦ, склады, производства. Выезд инженера, гарантия 1 год.",
+      keywords:
+        "монтаж вентиляции Москва, кондиционирование Москва, инженерные системы Москва, дымоудаление Москва, Freonn",
+    };
+  }
+
+  if (slug === "moskovskaya-oblast") {
+    return {
+      title: "Монтаж инженерных систем в Московской области — Freonn",
+      description:
+        "Проектирование и монтаж инженерных систем по всей Московской области: вентиляция, кондиционирование, дымоудаление, отопление. 1280+ объектов, выезд инженера.",
+      keywords:
+        "монтаж вентиляции Московская область, кондиционирование МО, инженерные системы Подмосковье, Freonn",
+    };
+  }
+
   return {
     title: `Монтаж инженерных систем ${city.phrase} — Freonn`,
     description: `Проектирование и монтаж вентиляции, кондиционирования, дымоудаления, отопления и электроснабжения ${city.phrase}. Выезд инженера и расчёт.`,

@@ -3,6 +3,7 @@ import ContactSection from "@/components/ContactSection";
 import { useSEO } from "@/hooks/useSEO";
 import { ymGoal } from "@/lib/ym";
 import { getCityEntry, SERVICE_SEO } from "@shared/geoRoutes";
+import { getPriceCityBullets } from "@shared/cityContent";
 import { buildPriceCityPath, shouldNoIndexForSeoPhase } from "@shared/seoMatrix";
 import { ArrowRight, Phone } from "lucide-react";
 
@@ -18,6 +19,7 @@ export default function PricingCityPage({ serviceSlug, citySlug }: PricingCityPa
 
   const canonical = buildPriceCityPath(serviceSlug, citySlug);
   const title = `Цены на монтаж ${service.genitive} ${city.phrase}`;
+  const priceBullets = getPriceCityBullets(service.genitive, city.phrase);
 
   useSEO({
     title: `${title} — Freonn`,
@@ -48,9 +50,9 @@ export default function PricingCityPage({ serviceSlug, citySlug }: PricingCityPa
             и требований к автоматике. Freonn готовит точную смету после выезда инженера на объект.
           </p>
           <ul className="list-disc pl-5 space-y-2 text-gray-600 font-body mb-8">
-            <li>Бесплатный выезд инженера {city.phrase}</li>
-            <li>Работаем с объектами от 500 м²</li>
-            <li>Фиксированная смета до начала монтажа</li>
+            {priceBullets.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
           <div className="flex flex-col sm:flex-row gap-3">
             <a href="/contacts" className="btn-dark inline-flex items-center gap-2 justify-center">

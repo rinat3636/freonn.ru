@@ -176,3 +176,18 @@ export function getObjectCityBullets(objectSlug: ObjectSlug): string[] {
   };
   return [...common, ...(byObject[objectSlug] ?? ["Соблюдение норм и требований заказчика"])];
 }
+
+export function getAliasCityParagraph(aliasName: string, cityPhrase: string, citySlug: string, cityName: string): string {
+  const content = getCityContent(citySlug, cityName);
+  return `${aliasName} ${cityPhrase}: Freonn выполняет полный цикл работ — обследование, проектирование, монтаж и пусконаладку. ${content.lsi}`;
+}
+
+export function getPriceCityBullets(serviceGenitive: string, cityPhrase: string): string[] {
+  return [
+    `Бесплатный выезд инженера ${cityPhrase}`,
+    `Ориентиры по стоимости монтажа ${serviceGenitive}`,
+    "Работаем с объектами от 500 м²",
+    "Фиксированная смета до начала монтажа",
+    "Гарантия 1 год на монтажные работы",
+  ];
+}
