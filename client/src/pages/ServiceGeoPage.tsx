@@ -2,7 +2,6 @@ import {
   buildServiceLocationPath,
   getCityAreaType,
   getCityEntry,
-  getNearbyCityLinks,
   type GeoSlug,
 } from "@shared/geoRoutes";
 import { getCityContent } from "@shared/cityContent";
