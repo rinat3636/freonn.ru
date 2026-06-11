@@ -132,9 +132,7 @@ export const SERVICE_SEO = {
   "peskostrujnaya-obrabotka": { name: "Пескоструйная обработка", genitive: "пескоструйной обработки" },
 } as const;
 
-const OBJECT_SLUGS = [
-  "sklad", "ofis", "tc", "zavod", "restoran", "gostinica", "shkola", "bolnica", "parking", "dc",
-];
+import { OBJECT_SLUGS } from "./objectSlugs";
 
 export const SERVICE_OBJECT_PATHS = new Set(
   SERVICE_SLUGS.flatMap((service) => OBJECT_SLUGS.map((object) => `/${service}-${object}`))
@@ -360,3 +358,6 @@ export function getPricingSlugs(): string[] {
 export function getCityAreaType(slug: string): "City" | "AdministrativeArea" {
   return slug === "moskovskaya-oblast" ? "AdministrativeArea" : "City";
 }
+
+export { OBJECT_SLUGS } from "./objectSlugs";
+export type { ObjectSlug } from "./objectSlugs";

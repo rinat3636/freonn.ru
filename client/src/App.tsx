@@ -165,7 +165,7 @@ function Router() {
         })
       )}
 
-      {/* Service × City landing pages (352 URL) */}
+      {/* Service × City landing pages (552 URL = 8 services × 69 cities) */}
       {SERVICE_LOCATION_ROUTES.map((route) => {
         const serviceKey = getServiceKeyBySlug(route.serviceSlug);
         if (!serviceKey) return null;

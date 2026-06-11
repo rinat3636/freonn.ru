@@ -1,5 +1,7 @@
 /**
- * SEO-матрица freonn.ru — фазы 2–4: 3D-лендинги, алиасы×город, кейсы, словарь, цены×город.
+ * SEO-матрица freonn.ru — phased rollout (SEO_RELEASE_PHASE 1–4).
+ * Phase 1: city hubs + service×city + service×object + static + blog.
+ * Phases 2–4: 3D matrix, aliases×city, price×city, cases, glossary, calculator.
  */
 import {
   CITY_BY_SLUG,
@@ -11,15 +13,14 @@ import {
 } from "./geoRoutes";
 import { isMatrixCity, MATRIX_CITY_SLUGS } from "./geoTiers";
 
-export const SEO_RELEASE_PHASE = 1;
+export const SEO_RELEASE_PHASE = 4;
 
 const MATRIX_CITIES = MATRIX_CITY_SLUGS.map((slug) => CITY_BY_SLUG[slug]);
 
-export const OBJECT_SLUGS = [
-  "sklad", "ofis", "tc", "zavod", "restoran", "gostinica", "shkola", "bolnica", "parking", "dc",
-] as const;
+import type { ObjectSlug } from "./objectSlugs";
+import { OBJECT_SLUGS } from "./objectSlugs";
 
-export type ObjectSlug = (typeof OBJECT_SLUGS)[number];
+export { OBJECT_SLUGS, type ObjectSlug } from "./objectSlugs";
 
 export const OBJECT_SEO: Record<ObjectSlug, { name: string; namePrep: string; nameGen: string }> = {
   sklad: { name: "склад", namePrep: "на складе", nameGen: "склада" },

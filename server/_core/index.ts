@@ -89,6 +89,9 @@ async function startServer() {
     "/xmlrpc.php":   "/",
     "/sitemap_index.xml": "/sitemap.xml",
     "/about":        "/o-kompanii",
+    "/garantiya":    "/garantii",
+    "/licenzii-i-sertifikaty": "/sertifikaty",
+    "/partneram":    "/partnery",
   };
   app.use((req, res, next) => {
     const pathname = req.path.replace(/\/$/, "") || "/";

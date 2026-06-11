@@ -13,6 +13,8 @@ import {
   getPriceCitySeoMeta,
   getServiceAliasCitySeoMeta,
   getServiceObjectCitySeoMeta,
+  parsePriceCityPath,
+  parseServiceAliasCityPath,
   parseServiceObjectCityPath,
   shouldNoIndexForSeoPhase,
 } from "../shared/seoMatrix";
@@ -132,6 +134,46 @@ export function buildPageJsonLd(pathname: string): object[] | null {
       areaServed: city
         ? { "@type": getCityAreaType(socParsed.city), name: city.name }
         : undefined,
+    }];
+  }
+
+  const aliasParsed = parseServiceAliasCityPath(pathname);
+  const aliasMeta = getServiceAliasCitySeoMeta(pathname);
+  if (aliasMeta && aliasParsed) {
+    const city = getCityEntry(aliasParsed.city);
+    return [{
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: aliasMeta.title.replace(" — Freonn", ""),
+      description: aliasMeta.description,
+      url,
+      provider: { "@id": "https://freonn.ru/#organization" },
+      areaServed: city ? { "@type": getCityAreaType(aliasParsed.city), name: city.name } : undefined,
+    }];
+  }
+
+  const priceParsed = parsePriceCityPath(pathname);
+  const priceMeta = getPriceCitySeoMeta(pathname);
+  if (priceMeta && priceParsed) {
+    const city = getCityEntry(priceParsed.city);
+    return [{
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: priceMeta.title.replace(" — Freonn", ""),
+      description: priceMeta.description,
+      url,
+      provider: { "@id": "https://freonn.ru/#organization" },
+      areaServed: city ? { "@type": getCityAreaType(priceParsed.city), name: city.name } : undefined,
+    }];
+  }
+
+  if (clean === "/") {
+    return [{
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Freonn — монтаж инженерных систем в Москве и МО",
+      url,
+      isPartOf: { "@id": "https://freonn.ru/#website" },
     }];
   }
 

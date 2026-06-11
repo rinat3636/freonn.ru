@@ -15,6 +15,7 @@ import {
   shouldOmitGeoMeta,
   stripGeoMetaTags,
 } from "../seoInjection";
+import { CANONICAL_REDIRECTS } from "../../shared/seoConfig";
 import { isValidSpaPath, normalizePathname } from "../spaRoutes";
 
 // Polyfill for import.meta.dirname (not available in Node.js < 20.11)
@@ -177,7 +178,9 @@ function injectServerSeo(html: string, pathname: string, status: number) {
   if (!seo) return next;
 
   const clean = pathname.replace(/\/$/, "") || "/";
-  const canonicalPath = status === 404 ? "/404" : isNoIndexPath(pathname) ? clean : clean === "/" ? "/" : clean;
+  const resolvedClean = CANONICAL_REDIRECTS[clean] ?? clean;
+  const canonicalPath =
+    status === 404 ? "/404" : isNoIndexPath(pathname) ? resolvedClean : resolvedClean === "/" ? "/" : resolvedClean;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "/" : canonicalPath}`;
   const title = escapeHtml(seo.title);
   const description = escapeHtml(seo.description);

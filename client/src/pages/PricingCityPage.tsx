@@ -1,9 +1,10 @@
 import PageLayout from "@/components/PageLayout";
 import ContactSection from "@/components/ContactSection";
+import ProcessSection from "@/components/ProcessSection";
 import { useSEO } from "@/hooks/useSEO";
 import { ymGoal } from "@/lib/ym";
-import { getCityEntry, SERVICE_SEO } from "@shared/geoRoutes";
-import { getPriceCityBullets } from "@shared/cityContent";
+import { buildServiceLocationPath, getCityEntry, SERVICE_SEO } from "@shared/geoRoutes";
+import { getCityContent, getPriceCityBullets, getPriceCityExtra } from "@shared/cityContent";
 import { buildPriceCityPath, shouldNoIndexForSeoPhase } from "@shared/seoMatrix";
 import { ArrowRight, Phone } from "lucide-react";
 
@@ -20,6 +21,8 @@ export default function PricingCityPage({ serviceSlug, citySlug }: PricingCityPa
   const canonical = buildPriceCityPath(serviceSlug, citySlug);
   const title = `Цены на монтаж ${service.genitive} ${city.phrase}`;
   const priceBullets = getPriceCityBullets(service.genitive, city.phrase);
+  const priceExtra = getPriceCityExtra(service.genitive, city.phrase, citySlug, city.name);
+  const cityContent = getCityContent(citySlug, city.name);
 
   useSEO({
     title: `${title} — Freonn`,
@@ -45,15 +48,24 @@ export default function PricingCityPage({ serviceSlug, citySlug }: PricingCityPa
     >
       <section className="py-14 bg-white">
         <div className="container max-w-3xl">
-          <p className="text-gray-600 font-body leading-relaxed mb-6">
-            Стоимость монтажа {service.genitive} {city.phrase} зависит от площади, мощности, трассировки
-            и требований к автоматике. Freonn готовит точную смету после выезда инженера на объект.
-          </p>
-          <ul className="list-disc pl-5 space-y-2 text-gray-600 font-body mb-8">
+          <p className="text-gray-600 font-body leading-relaxed mb-4">{priceExtra}</p>
+          <p className="text-gray-600 font-body leading-relaxed mb-6">{cityContent.lsi}</p>
+          <ul className="list-disc pl-5 space-y-2 text-gray-600 font-body mb-6">
             {priceBullets.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
+          <p className="text-gray-600 font-body text-sm mb-8">
+            Общие ориентиры по ценам:{" "}
+            <a href={`/ceny/${serviceSlug}`} className="text-[#2D3092] font-semibold hover:underline">
+              прайс {service.genitive}
+            </a>
+            . Коммерческое предложение {city.phrase}:{" "}
+            <a href={buildServiceLocationPath(serviceSlug, citySlug)} className="text-[#2D3092] font-semibold hover:underline">
+              {service.name} {city.phrase}
+            </a>
+            .
+          </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <a href="/contacts" className="btn-dark inline-flex items-center gap-2 justify-center">
               Запросить расчёт <ArrowRight size={16} />
@@ -64,6 +76,7 @@ export default function PricingCityPage({ serviceSlug, citySlug }: PricingCityPa
           </div>
         </div>
       </section>
+      <ProcessSection />
       <ContactSection />
     </PageLayout>
   );

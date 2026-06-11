@@ -12,15 +12,11 @@ const footerLinks: Record<string, { label: string; href: string }[]> = {
   "О компании": [
     { label: "О нас", href: "/o-kompanii" },
     { label: "Новости", href: "/novosti" },
-    { label: "Лицензии и сертификаты", href: "/licenzii-i-sertifikaty" },
+    { label: "Лицензии и сертификаты", href: "/sertifikaty" },
     { label: "Реквизиты", href: "/rekvizity" },
     { label: "Документы", href: "/dokumenty" },
-    { label: "Оплата и доставка", href: "/oplata-i-dostavka" },
     { label: "Вакансии", href: "/vakansii" },
-    { label: "Сотрудники", href: "/sotrudniki" },
-    { label: "Видео кейсы", href: "/video-kejsy" },
-    { label: "Полезные материалы", href: "/poleznye-materialy" },
-    { label: "Партнёрам", href: "/partneram" },
+    { label: "Партнёрам", href: "/partnery" },
     { label: "Контакты", href: "/contacts" },
   ],
   "Инженерные системы": [

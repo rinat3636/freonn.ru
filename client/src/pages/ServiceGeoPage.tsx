@@ -5,6 +5,7 @@ import {
   getNearbyCityLinks,
   type GeoSlug,
 } from "@shared/geoRoutes";
+import { getCityContent } from "@shared/cityContent";
 import { getCityTier, getTier1NearbyLinks } from "@shared/geoTiers";
 import { useSEO } from "@/hooks/useSEO";
 import PageLayout from "@/components/PageLayout";
@@ -209,14 +210,17 @@ function resolveLocationContext(locationSlug: string) {
   const city = getCityEntry(locationSlug);
   if (!city) return null;
 
+  const cityContent = getCityContent(locationSlug, city.name);
+  const cityTier = getCityTier(locationSlug);
+
   return {
     name: city.name,
     phrase: city.phrase,
     areaType: getCityAreaType(locationSlug),
-    description: `Выезжаем на коммерческие, складские, производственные и социальные объекты ${city.phrase}. Инженер Freonn обследует площадку, подбирает оборудование и готовит смету под ваш проект.`,
+    description: `${cityContent.lsi} Специализация Freonn — монтаж инженерных систем для коммерческих и промышленных объектов от 500 м².`,
     coverageTitle: `Работаем ${city.phrase}`,
     coverage: [city.name, "Московская область", "Москва"],
-    nearby: getCityTier(locationSlug) <= 1 ? getTier1NearbyLinks(locationSlug) : getNearbyCityLinks(locationSlug, 3),
+    nearby: cityTier <= 1 ? getTier1NearbyLinks(locationSlug) : getTier1NearbyLinks(locationSlug, 3),
     cityHref: `/${locationSlug}`,
     proofTitle: `Опыт на объектах ${city.name} и МО`,
     proofCases: proofCasesRegion,
@@ -270,27 +274,6 @@ export default function ServiceGeoPage({ serviceKey, locationSlug }: ServiceGeoP
       { name: "Услуги", url: "/uslugi" },
       { name: service.name, url: `/${service.slug}` },
       { name: location.name, url: canonical },
-    ],
-    jsonLd: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        name: title,
-        description,
-        url: `https://freonn.ru${canonical}`,
-        provider: { "@id": "https://freonn.ru/#organization" },
-        areaServed: { "@type": location.areaType, name: location.name },
-        serviceType: service.name,
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faq.map((item) => ({
-          "@type": "Question",
-          name: item.q,
-          acceptedAnswer: { "@type": "Answer", text: item.a },
-        })),
-      },
     ],
   });
 

@@ -1,4 +1,5 @@
-import type { ObjectSlug } from "./seoMatrix";
+import type { ObjectSlug } from "./objectSlugs";
+import { TIER2_CITY_CONTENT } from "./tier2CityContent";
 
 export interface CityContent {
   district: string;
@@ -149,8 +150,9 @@ const OBJECT_EXTRA: Record<ObjectSlug, string> = {
 
 export function getCityContent(citySlug: string, cityName: string): CityContent {
   return (
-    CITY_CONTENT[citySlug] ?? {
-      district: `${cityName}ском районе`,
+    CITY_CONTENT[citySlug] ??
+    TIER2_CITY_CONTENT[citySlug] ?? {
+      district: `городе ${cityName}`,
       lsi: `Freonn выполняет полный комплекс работ по проектированию, монтажу и обслуживанию инженерных систем ${cityName} и прилегающего района. Работаем с промышленными предприятиями, коммерческой недвижимостью и жилыми объектами.`,
       objects: "Промышленные объекты, коммерческая недвижимость",
     }
@@ -189,5 +191,24 @@ export function getPriceCityBullets(serviceGenitive: string, cityPhrase: string)
     "Работаем с объектами от 500 м²",
     "Фиксированная смета до начала монтажа",
     "Гарантия 1 год на монтажные работы",
+  ];
+}
+
+export function getPriceCityExtra(
+  serviceGenitive: string,
+  cityPhrase: string,
+  citySlug: string,
+  cityName: string
+): string {
+  const content = getCityContent(citySlug, cityName);
+  return `Стоимость монтажа ${serviceGenitive} ${cityPhrase} рассчитывается после обследования объекта. ${content.lsi} Подробные ориентиры — на странице цен Freonn; точная смета формируется инженером на площадке.`;
+}
+
+export function getAliasCitySteps(aliasName: string): string[] {
+  return [
+    `Заявка на ${aliasName.toLowerCase()} и согласование выезда`,
+    "Обследование объекта и техническое задание",
+    "Проектирование, монтаж и пусконаладка",
+    "Передача исполнительной документации",
   ];
 }

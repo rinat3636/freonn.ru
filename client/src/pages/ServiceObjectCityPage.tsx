@@ -4,7 +4,6 @@ import ProcessSection from "@/components/ProcessSection";
 import { useSEO } from "@/hooks/useSEO";
 import { ymGoal } from "@/lib/ym";
 import {
-  getCityAreaType,
   getCityEntry,
   getNearbyCityLinks,
   buildServiceLocationPath,
@@ -53,16 +52,6 @@ export default function ServiceObjectCityPage({
       { name: city.name, url: buildServiceLocationPath(serviceSlug, citySlug) },
       { name: title, url: canonical },
     ],
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      name: title,
-      description,
-      url: `https://freonn.ru${canonical}`,
-      provider: { "@id": "https://freonn.ru/#organization" },
-      areaServed: { "@type": getCityAreaType(citySlug), name: city.name },
-      serviceType: service.name,
-    },
   });
 
   const nearby =
@@ -131,7 +120,11 @@ export default function ServiceObjectCityPage({
           <p className="text-gray-600 font-body leading-relaxed mb-4">{cityContent.lsi}</p>
           <p className="text-gray-600 font-body leading-relaxed">
             Типовые объекты {city.phrase}: {cityContent.objects}. Freonn проектирует решения под конкретный режим работы
-            {object.nameGen} с учётом норм, нагрузок и требований заказчика.
+            {object.nameGen} с учётом норм, нагрузок и требований заказчика. Работаем в {cityContent.district} и по всей Московской области.
+          </p>
+          <p className="text-gray-600 font-body leading-relaxed mt-4">
+            Этапы работ: обследование и замеры → проект и подбор оборудования → монтаж и пусконаладка → сдача объекта с документацией.
+            Для объектов от 500 м² выезжаем {city.phrase} в течение 1 рабочего дня.
           </p>
         </div>
       </section>

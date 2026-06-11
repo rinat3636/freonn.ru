@@ -13,7 +13,7 @@ import {
   isKnownCitySlug,
 } from "@shared/geoRoutes";
 import { getCityContent } from "@shared/cityContent";
-import { getCityTier, isMatrixCity } from "@shared/geoTiers";
+import { getCityTier, isMatrixCity, getTier1NearbyLinks } from "@shared/geoTiers";
 import { getCity3dLinks, getCityServiceLinks } from "@shared/seoMatrix";
 import { useSEO } from "@/hooks/useSEO";
 import { motion } from "framer-motion";
@@ -179,28 +179,6 @@ export default function CityPage({ city }: CityPageProps) {
     canonical: `/${city}`,
     omitRegionMeta: true,
     breadcrumbs: [{ name: cityName, url: `/${city}` }],
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "Service",
-      name: `Монтаж инженерных систем в ${cityName}`,
-      description: `Проектирование и монтаж вентиляции, кондиционирования, дымоудаления и отопления ${cityIn}. Бесплатный выезд инженера.`,
-      url: `https://freonn.ru/${city}`,
-      provider: {
-        "@type": "LocalBusiness",
-        name: "Freonn",
-        url: "https://freonn.ru",
-        telephone: "+78001012009",
-      },
-      areaServed: {
-        "@type": getCityAreaType(city),
-        name: cityName,
-      },
-      serviceType: "Монтаж инженерных систем",
-      serviceOutput: {
-        "@type": "Thing",
-        name: "Монтаж инженерных систем",
-      },
-    },
   });
 
   return (
@@ -322,17 +300,33 @@ export default function CityPage({ city }: CityPageProps) {
               ))}
             </div>
             {cityTier === 2 && (
-              <p className="mt-6 text-gray-600 font-body text-sm">
-                Также работаем по всей{" "}
-                <a href="/moskovskaya-oblast" className="text-[#2D3092] font-semibold hover:underline">
-                  Московской области
-                </a>{" "}
-                и в{" "}
-                <a href="/moskva" className="text-[#2D3092] font-semibold hover:underline">
-                  Москве
-                </a>
-                .
-              </p>
+              <>
+                <p className="mt-6 text-gray-600 font-body text-sm">
+                  Также работаем по всей{" "}
+                  <a href="/moskovskaya-oblast" className="text-[#2D3092] font-semibold hover:underline">
+                    Московской области
+                  </a>{" "}
+                  и в{" "}
+                  <a href="/moskva" className="text-[#2D3092] font-semibold hover:underline">
+                    Москве
+                  </a>
+                  .
+                </p>
+                <div className="mt-4">
+                  <h3 className="font-heading font-semibold text-[#0F1340] text-sm mb-2">Ближайшие ключевые города</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {getTier1NearbyLinks(city, 3).map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        className="px-3 py-1.5 bg-[#F7F8FF] hover:bg-[#0F1340] hover:text-white text-[#0F1340] rounded-full text-xs font-body transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </section>

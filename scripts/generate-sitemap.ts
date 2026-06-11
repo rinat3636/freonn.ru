@@ -17,6 +17,7 @@ import {
   SERVICE_OBJECT_PATHS,
   VALID_STATIC_PATHS,
 } from "../shared/geoRoutes";
+import { CANONICAL_REDIRECTS } from "../shared/seoConfig";
 import {
   getPathSeoPhase,
   PRICE_CITY_PATHS,
@@ -29,6 +30,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = path.join(__dirname, "../client/public");
 const SITE_URL = "https://freonn.ru";
 const TODAY = new Date().toISOString().slice(0, 10);
+
+const REDIRECT_SOURCES = new Set(Object.keys(CANONICAL_REDIRECTS));
 
 type UrlEntry = { loc: string; priority: string; changefreq: string; lastmod: string };
 
@@ -76,7 +79,7 @@ ${body}
 }
 
 function includeInSitemap(urlPath: string): boolean {
-  if (NOINDEX_PATHS.has(urlPath) || urlPath === "/404") return false;
+  if (NOINDEX_PATHS.has(urlPath) || urlPath === "/404" || REDIRECT_SOURCES.has(urlPath)) return false;
   return getPathSeoPhase(urlPath) <= SEO_RELEASE_PHASE;
 }
 
@@ -114,9 +117,8 @@ for (const p of VALID_STATIC_PATHS) {
 if (includeInSitemap("/slovar")) {
   staticUrls.push(entry("/slovar", "0.7", "monthly"));
   for (const t of GLOSSARY_TERMS) {
-    if (includeInSitemap(`/slovar/${t.slug}`)) {
-      staticUrls.push(entry(`/slovar/${t.slug}`, "0.6", "monthly"));
-    }
+    const p = `/slovar/${t.slug}`;
+    if (includeInSitemap(p)) staticUrls.push(entry(p, "0.6", "monthly"));
   }
 }
 if (includeInSitemap("/kalkulyator-inzhenernyh-sistem")) {
@@ -127,7 +129,7 @@ for (const c of CASE_STUDIES) {
   if (includeInSitemap(p)) staticUrls.push(entry(p, "0.75", "monthly"));
 }
 
-const cityUrls = CITIES.map((c) =>
+const cityUrls = CITIES.filter((c) => includeInSitemap(`/${c.slug}`)).map((c) =>
   entry(`/${c.slug}`, cityPriority(c.slug), cityChangefreq(c.slug))
 );
 
@@ -151,8 +153,13 @@ const priceCityUrls = [...PRICE_CITY_PATHS]
   .filter(includeInSitemap)
   .map((p) => entry(p, "0.7", "monthly"));
 
-const blogUrls = getBlogSlugs().map((s) => entry(`/blog/${s}`, "0.65", "monthly"));
-const pricingUrls = getPricingSlugs().map((s) => entry(`/ceny/${s}`, "0.7", "monthly"));
+const blogUrls = getBlogSlugs()
+  .filter((s) => includeInSitemap(`/blog/${s}`))
+  .map((s) => entry(`/blog/${s}`, "0.65", "monthly"));
+
+const pricingUrls = getPricingSlugs()
+  .filter((s) => includeInSitemap(`/ceny/${s}`))
+  .map((s) => entry(`/ceny/${s}`, "0.7", "monthly"));
 
 const moscowCoreUrls: UrlEntry[] = [
   entry("/", "1.0", "daily"),
@@ -179,14 +186,26 @@ const groups: { file: string; urls: UrlEntry[] }[] = [
   { file: "sitemap-blog.xml", urls: blogUrls },
 ];
 
+
 let total = 0;
 const indexFiles: string[] = [];
 for (const g of groups) {
-  if (g.urls.length === 0) continue;
-  fs.writeFileSync(path.join(OUT_DIR, g.file), renderUrlset(g.urls), "utf8");
+  const outPath = path.join(OUT_DIR, g.file);
+  if (g.urls.length === 0) {
+    if (fs.existsSync(outPath)) fs.unlinkSync(outPath);
+    continue;
+  }
+  fs.writeFileSync(outPath, renderUrlset(g.urls), "utf8");
   indexFiles.push(g.file);
   total += g.urls.length;
   console.log(`  ${g.file}: ${g.urls.length} URL`);
+}
+
+for (const f of fs.readdirSync(OUT_DIR)) {
+  if (f.startsWith("sitemap") && f.endsWith(".xml") && !indexFiles.includes(f) && f !== "sitemap-index.xml" && f !== "sitemap.xml") {
+    fs.unlinkSync(path.join(OUT_DIR, f));
+    console.log(`  removed orphan ${f}`);
+  }
 }
 
 const indexXml = renderIndex(indexFiles);
