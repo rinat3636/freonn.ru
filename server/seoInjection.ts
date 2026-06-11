@@ -7,17 +7,28 @@ import {
   normalizePathname,
   parseServiceLocationPath,
   SERVICE_SEO,
+  SERVICE_SLUGS,
 } from "../shared/geoRoutes";
+import { getBlogArticleSeo, getBlogArticleSeoMeta } from "../shared/blogSeo";
 import { getCityTier } from "../shared/geoTiers";
 import {
   getPriceCitySeoMeta,
   getServiceAliasCitySeoMeta,
   getServiceObjectCitySeoMeta,
+  OBJECT_SEO,
   parsePriceCityPath,
   parseServiceAliasCityPath,
   parseServiceObjectCityPath,
+  SERVICE_ALIASES,
   shouldNoIndexForSeoPhase,
 } from "../shared/seoMatrix";
+import { CANONICAL_REDIRECTS } from "../shared/seoConfig";
+import {
+  buildFaqJsonLd,
+  getServiceStaticFaq,
+  resolveServiceSlugFromPath,
+  SERVICE_OBJECT_STATIC_FAQ,
+} from "../shared/serviceFaq";
 
 export { shouldOmitGeoMeta, NOINDEX_PATHS } from "../shared/geoRoutes";
 
@@ -201,6 +212,81 @@ export function buildPageJsonLd(pathname: string): object[] | null {
     }];
   }
 
+  if (clean.startsWith("/blog/")) {
+    const slug = clean.slice("/blog/".length);
+    const article = getBlogArticleSeo(slug);
+    if (!article) return null;
+    return [{
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: article.title,
+      description: article.description,
+      url,
+      datePublished: article.published,
+      dateModified: article.published,
+      author: { "@type": "Organization", name: "Freonn", url: "https://freonn.ru" },
+      publisher: {
+        "@type": "Organization",
+        name: "Freonn",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW/freonn-logo_62401a1b.png",
+        },
+      },
+      articleSection: article.category,
+      inLanguage: "ru-RU",
+    }];
+  }
+
+  const pathSlug = clean.slice(1);
+  const resolvedService = resolveServiceSlugFromPath(pathSlug);
+  const service = SERVICE_SEO[resolvedService as keyof typeof SERVICE_SEO];
+  if (service && SERVICE_SLUGS.includes(resolvedService as (typeof SERVICE_SLUGS)[number])) {
+    const alias = SERVICE_ALIASES.find((a) => a.slug === pathSlug);
+    const serviceName = alias?.name ?? service.name;
+    const faq = getServiceStaticFaq(resolvedService);
+    return [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: serviceName,
+        description: `Проектирование и монтаж ${service.genitive} для коммерческих и промышленных объектов в Москве и Московской области.`,
+        url,
+        provider: { "@id": "https://freonn.ru/#organization" },
+        areaServed: [
+          { "@type": "City", name: "Москва" },
+          { "@type": "AdministrativeArea", name: "Московская область" },
+        ],
+        serviceType: serviceName,
+      },
+      buildFaqJsonLd(faq),
+    ];
+  }
+
+  for (const serviceSlug of SERVICE_SLUGS) {
+    for (const [objectSlug, objectData] of Object.entries(OBJECT_SEO)) {
+      if (clean === `/${serviceSlug}-${objectSlug}`) {
+        const serviceData = SERVICE_SEO[serviceSlug];
+        return [
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: `${serviceData.name} ${objectData.namePrep}`,
+            description: `Проектирование и монтаж ${serviceData.genitive} ${objectData.namePrep} в Москве и Московской области.`,
+            url,
+            provider: { "@id": "https://freonn.ru/#organization" },
+            areaServed: [
+              { "@type": "City", name: "Москва" },
+              { "@type": "AdministrativeArea", name: "Московская область" },
+            ],
+            serviceType: serviceData.name,
+          },
+          buildFaqJsonLd(SERVICE_OBJECT_STATIC_FAQ),
+        ];
+      }
+    }
+  }
+
   return null;
 }
 
@@ -264,4 +350,49 @@ export function getServiceGeoSeoMeta(pathname: string) {
     getServiceAliasCitySeoMeta(pathname) ||
     getPriceCitySeoMeta(pathname)
   );
+}
+
+export function getBlogSeoMeta(pathname: string) {
+  const clean = normalizePathname(pathname);
+  if (!clean.startsWith("/blog/")) return null;
+  return getBlogArticleSeoMeta(clean.slice("/blog/".length));
+}
+
+export function getServicePageSeoMeta(pathname: string) {
+  const clean = normalizePathname(pathname);
+  const pathSlug = clean.slice(1);
+  const alias = SERVICE_ALIASES.find((a) => a.slug === pathSlug);
+  if (alias) {
+    return {
+      title: `${alias.name} в Москве и МО — Freonn`,
+      description: `Проектирование и монтаж ${alias.genitive} для коммерческих и промышленных объектов в Москве и Московской области. Выезд инженера, смета, гарантия.`,
+      keywords: `монтаж ${alias.genitive} Москва, ${alias.name.toLowerCase()} Московская область, Freonn`,
+    };
+  }
+
+  const resolved = resolveServiceSlugFromPath(pathSlug);
+  const service = SERVICE_SEO[resolved as keyof typeof SERVICE_SEO];
+  if (!service || !SERVICE_SLUGS.includes(resolved as (typeof SERVICE_SLUGS)[number])) {
+    return null;
+  }
+
+  return {
+    title: `Монтаж ${service.genitive} в Москве и МО — Freonn`,
+    description: `Проектирование и монтаж ${service.genitive} для коммерческих и промышленных объектов в Москве и Московской области. Выезд инженера, смета, гарантия.`,
+    keywords: `монтаж ${service.genitive} Москва, ${service.name.toLowerCase()} Московская область, Freonn`,
+  };
+}
+
+export function resolveCanonicalPath(pathname: string): string {
+  const clean = normalizePathname(pathname);
+  const redirected = CANONICAL_REDIRECTS[clean];
+  if (redirected) return redirected;
+
+  const pathSlug = clean.slice(1);
+  const resolved = resolveServiceSlugFromPath(pathSlug);
+  if (resolved !== pathSlug && SERVICE_SEO[resolved as keyof typeof SERVICE_SEO]) {
+    return `/${resolved}`;
+  }
+
+  return clean;
 }

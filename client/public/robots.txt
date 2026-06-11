@@ -10,6 +10,10 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
+Disallow: /oplata-i-dostavka
+Disallow: /sotrudniki
+Disallow: /video-kejsy
+Disallow: /poleznye-materialy
 # Закрываем несуществующие страницы
 Disallow: /about
 Disallow: /about/
@@ -41,6 +45,10 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
+Disallow: /oplata-i-dostavka
+Disallow: /sotrudniki
+Disallow: /video-kejsy
+Disallow: /poleznye-materialy
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
@@ -70,6 +78,10 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
+Disallow: /oplata-i-dostavka
+Disallow: /sotrudniki
+Disallow: /video-kejsy
+Disallow: /poleznye-materialy
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
@@ -98,6 +110,10 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
+Disallow: /oplata-i-dostavka
+Disallow: /sotrudniki
+Disallow: /video-kejsy
+Disallow: /poleznye-materialy
 Disallow: /about
 Disallow: /about/
 Disallow: /shop

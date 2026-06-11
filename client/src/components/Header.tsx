@@ -39,7 +39,6 @@ const navItems = [
 
 const topBarLinks = [
   { label: "Акции", href: "/akcii" },
-  { label: "Оплата и доставка", href: "/oplata-i-dostavka" },
   { label: "Гарантии", href: "/garantii" },
   { label: "Сертификаты", href: "/sertifikaty" },
 ];

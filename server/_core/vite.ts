@@ -8,14 +8,16 @@ import { createServer as createViteServer } from "vite";
 import { SERVICE_SEO } from "../../shared/geoRoutes";
 import {
   buildPageJsonLd,
+  getBlogSeoMeta,
   getCitySeoMeta,
   getServiceGeoSeoMeta,
+  getServicePageSeoMeta,
   injectPageJsonLd,
   isNoIndexPath,
+  resolveCanonicalPath,
   shouldOmitGeoMeta,
   stripGeoMetaTags,
 } from "../seoInjection";
-import { CANONICAL_REDIRECTS } from "../../shared/seoConfig";
 import { isValidSpaPath, normalizePathname } from "../spaRoutes";
 
 // Polyfill for import.meta.dirname (not available in Node.js < 20.11)
@@ -136,6 +138,12 @@ function getServerSeo(pathname: string, status: number): ServerSeoMeta | null {
   const serviceGeoMeta = getServiceGeoSeoMeta(pathname);
   if (serviceGeoMeta) return serviceGeoMeta;
 
+  const blogMeta = getBlogSeoMeta(pathname);
+  if (blogMeta) return blogMeta;
+
+  const servicePageMeta = getServicePageSeoMeta(pathname);
+  if (servicePageMeta) return servicePageMeta;
+
   const cityMeta = getCitySeoMeta(clean.slice(1));
   if (cityMeta) return cityMeta;
 
@@ -178,7 +186,7 @@ function injectServerSeo(html: string, pathname: string, status: number) {
   if (!seo) return next;
 
   const clean = pathname.replace(/\/$/, "") || "/";
-  const resolvedClean = CANONICAL_REDIRECTS[clean] ?? clean;
+  const resolvedClean = resolveCanonicalPath(clean);
   const canonicalPath =
     status === 404 ? "/404" : isNoIndexPath(pathname) ? resolvedClean : resolvedClean === "/" ? "/" : resolvedClean;
   const canonical = `${SITE_URL}${canonicalPath === "/" ? "/" : canonicalPath}`;

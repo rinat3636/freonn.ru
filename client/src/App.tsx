@@ -3,7 +3,7 @@ import { useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import PreloaderScreen from "./components/PreloaderScreen";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FreonnAuthProvider } from "./contexts/FreonnAuthContext";
@@ -93,22 +93,27 @@ function Router() {
       <Route path={"/premium-obekty"}>{() => <ObjectCategoryPage category="premium-obekty" />}</Route>
 
       {/* Company sub-pages */}
-      <Route path={"/licenzii-i-sertifikaty"} component={DocumentsPage} />
+      <Route path={"/licenzii-i-sertifikaty"}><Redirect to="/sertifikaty" /></Route>
       <Route path={"/sertifikaty"} component={DocumentsPage} />
       <Route path={"/rekvizity"} component={RequisitesPage} />
       <Route path={"/garantii"} component={GuaranteePage} />
-      <Route path={"/garantiya"} component={GuaranteePage} />
+      <Route path={"/garantiya"}><Redirect to="/garantii" /></Route>
       <Route path={"/akcii"} component={PromotionsPage} />
       <Route path={"/novosti"} component={NewsPage} />
       <Route path={"/vakansii"} component={VacanciesPage} />
       <Route path={"/dokumenty"} component={DocumentsPage} />
       <Route path={"/partnery"} component={PartnersPage} />
-      <Route path={"/partneram"} component={PartnersPage} />
+      <Route path={"/partneram"}><Redirect to="/partnery" /></Route>
       <Route path={"/oplata-i-dostavka"}>
         {() => (
           <ComingSoon
             title="Оплата и доставка"
             breadcrumb={[{ label: "О компании", href: "/o-kompanii" }, { label: "Оплата" }]}
+            body="Оплата работ выполняется по договору: безналичный расчёт для юридических лиц, аванс и поэтапные платежи по согласованному графику. Доставка оборудования на объект организуется силами Freonn или поставщика — условия фиксируются в спецификации."
+            links={[
+              { label: "Реквизиты", href: "/rekvizity" },
+              { label: "Контакты", href: "/contacts" },
+            ]}
           />
         )}
       </Route>
@@ -117,6 +122,11 @@ function Router() {
           <ComingSoon
             title="Сотрудники"
             breadcrumb={[{ label: "Сотрудники" }]}
+            body="Команда Freonn — инженеры, проектировщики и монтажники с опытом на промышленных и коммерческих объектах. Полный раздел с фото и биографиями готовится к публикации."
+            links={[
+              { label: "О компании", href: "/o-kompanii" },
+              { label: "Вакансии", href: "/vakansii" },
+            ]}
           />
         )}
       </Route>
@@ -125,6 +135,11 @@ function Router() {
           <ComingSoon
             title="Видео кейсы"
             breadcrumb={[{ label: "Видео кейсы" }]}
+            body="Видеообзоры реализованных объектов появятся в этом разделе. Пока доступны текстовые кейсы и портфолио выполненных проектов."
+            links={[
+              { label: "Кейсы", href: "/kejs/aero-city-moskva" },
+              { label: "Объекты", href: "/obekty" },
+            ]}
           />
         )}
       </Route>
@@ -133,6 +148,12 @@ function Router() {
           <ComingSoon
             title="Полезные материалы"
             breadcrumb={[{ label: "Полезные материалы" }]}
+            body="Сборник чек-листов, нормативов и практических рекомендаций по инженерным системам готовится к публикации. Уже сейчас доступны статьи блога и глоссарий терминов."
+            links={[
+              { label: "Блог", href: "/blog" },
+              { label: "Словарь терминов", href: "/slovar" },
+              { label: "FAQ", href: "/faq" },
+            ]}
           />
         )}
       </Route>

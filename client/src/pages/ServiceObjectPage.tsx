@@ -5,7 +5,6 @@
  * SAFETY: AI-контент с полным graceful fallback
  */
 import { useSEO } from "@/hooks/useSEO";
-import { useAISEO } from "@/hooks/useAISEO";
 import PageLayout from "@/components/PageLayout";
 import NotFound from "@/pages/NotFound";
 import { motion } from "framer-motion";
@@ -134,17 +133,7 @@ export default function ServiceObjectPage({ service, objectType }: ServiceObject
   const pageDesc = `Профессиональный монтаж ${svc.nameGen} в ${obj.namePrep} в Москве и МО. Freonn — 15 лет опыта, 1280+ объектов. Бесплатный расчёт: 8(800)101-2009.`;
   const canonical = `/${svc.slug}-${obj.slug}`;
 
-  // AI SEO мета-теги
-  const aiMeta = useAISEO({
-    type: "service",
-    fallbackTitle: pageTitle,
-    fallbackDescription: pageDesc,
-    fallbackKeywords: `${svc.nameGen} ${obj.name.toLowerCase()}, монтаж ${svc.nameGen} в ${obj.namePrep}, ${svc.nameGen} Москва`,
-    data: { name: `${svc.name} для ${obj.name}`, objectType: obj.name },
-    cacheKey: `svc_obj_${service}_${objectType}`,
-  });
-
-  // AI FAQ загрузка
+  // AI FAQ загрузка (контент страницы; JSON-LD только в SSR)
   useEffect(() => {
     if (faqLoaded) return;
     const cacheKey = `freonn_faq_${service}_${objectType}`;
@@ -184,24 +173,15 @@ export default function ServiceObjectPage({ service, objectType }: ServiceObject
   }, [service, objectType, faqLoaded, svc.name, obj.description]);
 
   useSEO({
-    title: aiMeta.title || pageTitle,
-    description: aiMeta.description || pageDesc,
-    keywords: aiMeta.keywords || `${svc.nameGen} ${obj.name.toLowerCase()}, монтаж ${svc.nameGen}`,
+    title: pageTitle,
+    description: pageDesc,
+    keywords: `${svc.nameGen} ${obj.name.toLowerCase()}, монтаж ${svc.nameGen} в ${obj.namePrep}, ${svc.nameGen} Москва`,
     canonical,
     breadcrumbs: [
       { name: "Услуги", url: "/uslugi" },
       { name: svc.name, url: `/${svc.slug}` },
       { name: obj.name, url: canonical },
     ],
-    jsonLd: faq.length > 0 ? {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faq.map(item => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
-      })),
-    } : undefined,
   });
 
   return (

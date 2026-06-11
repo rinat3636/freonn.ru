@@ -7,7 +7,7 @@ import PageLayout from "@/components/PageLayout";
 import { useRoute } from "wouter";
 import { motion } from "framer-motion";
 import { useSEO } from "@/hooks/useSEO";
-import { useAISEO } from "@/hooks/useAISEO";
+import { getBlogArticleSeoMeta } from "@shared/blogSeo";
 import { ArrowLeft, Phone } from "lucide-react";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW";
@@ -898,52 +898,23 @@ export default function BlogArticlePage() {
   const article = articles[slug];
   const dates = articleDates[slug];
 
-  // AI-генерация мета-тегов для статьи
-  const aiMeta = useAISEO({
-    type: "blog",
-    fallbackTitle: article?.title || "Статья",
-    fallbackDescription: article ? article.content.replace(/[#*]/g, '').replace(/\n/g, ' ').slice(0, 160) : "",
-    fallbackKeywords: article ? article.category.toLowerCase() + ', инженерные системы, Freonn, монтаж вентиляции' : "",
-    data: article ? { title: article.title, category: article.category, content: article.content.slice(0, 300) } : {},
-    cacheKey: `blog_${slug}`,
-  });
+  const seoMeta = article ? getBlogArticleSeoMeta(slug) : null;
+  const fallbackDescription = article
+    ? article.content.replace(/[#*]/g, "").replace(/\n/g, " ").slice(0, 160)
+    : "";
 
   useSEO(article ? {
-    title: aiMeta.title,
-    description: aiMeta.description || article.content.replace(/[#*]/g, '').replace(/\n/g, ' ').slice(0, 160),
-    keywords: aiMeta.keywords || article.category.toLowerCase() + ', инженерные системы, Freonn, монтаж вентиляции',
-    canonical: '/blog/' + slug,
-    ogType: 'article',
+    title: seoMeta?.title ?? `${article.title} — Freonn`,
+    description: seoMeta?.description ?? fallbackDescription,
+    keywords: seoMeta?.keywords ?? `${article.category.toLowerCase()}, инженерные системы, Freonn, монтаж вентиляции`,
+    canonical: `/blog/${slug}`,
+    ogType: "article",
     publishedTime: dates?.published,
     modifiedTime: dates?.modified,
     breadcrumbs: [
-      { name: 'Блог', url: '/blog' },
-      { name: article.title, url: '/blog/' + slug },
+      { name: "Блог", url: "/blog" },
+      { name: article.title, url: `/blog/${slug}` },
     ],
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      headline: article.title,
-      description: article.content.replace(/[#*]/g, '').replace(/\n/g, ' ').slice(0, 160),
-      url: 'https://freonn.ru/blog/' + slug,
-      datePublished: dates?.published,
-      dateModified: dates?.modified ?? dates?.published,
-      author: {
-        "@type": "Organization",
-        name: "Freonn",
-        url: "https://freonn.ru",
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Freonn",
-        logo: {
-          "@type": "ImageObject",
-          url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW/freonn-logo_62401a1b.png",
-        },
-      },
-      articleSection: article.category,
-      inLanguage: "ru-RU",
-    },
   } : {
     title: 'Статья не найдена',
     description: 'Статья не найдена',

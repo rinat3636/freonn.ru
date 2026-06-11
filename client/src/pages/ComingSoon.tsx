@@ -11,9 +11,11 @@ import { ymGoal } from "@/lib/ym";
 interface ComingSoonProps {
   title: string;
   breadcrumb: { label: string; href?: string }[];
+  body?: string;
+  links?: { label: string; href: string }[];
 }
 
-export default function ComingSoon({ title, breadcrumb }: ComingSoonProps) {
+export default function ComingSoon({ title, breadcrumb, body, links }: ComingSoonProps) {
   useSEO({
     title,
     description: `${title} — раздел в разработке. Freonn — инженерная компания в Москве и МО.`,
@@ -35,9 +37,23 @@ export default function ComingSoon({ title, breadcrumb }: ComingSoonProps) {
             <h2 className="font-heading font-bold text-[#0F1340] text-2xl mb-3">
               Раздел в разработке
             </h2>
-            <p className="text-gray-500 font-body mb-8 leading-relaxed">
-              Этот раздел сайта находится в разработке. Пока вы можете связаться с нами напрямую — мы ответим на все вопросы.
+            <p className="text-gray-500 font-body mb-6 leading-relaxed">
+              {body ||
+                "Этот раздел сайта находится в разработке. Пока вы можете связаться с нами напрямую — мы ответим на все вопросы."}
             </p>
+            {links && links.length > 0 && (
+              <div className="flex flex-wrap gap-2 justify-center mb-8">
+                {links.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm font-body text-[#2D3092] hover:underline"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/contacts" onClick={() => ymGoal("coming_soon_contact_click")} className="btn-dark inline-flex items-center gap-2 justify-center">
                 <Phone size={16} /> Связаться с нами
