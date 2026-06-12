@@ -26,15 +26,21 @@ if (!Number.isInteger(phase) || phase < 1 || phase > 4) {
 }
 
 const src = fs.readFileSync(MATRIX_PATH, "utf8");
-const next = src.replace(/export const SEO_RELEASE_PHASE = \d+;/, `export const SEO_RELEASE_PHASE = ${phase};`);
+const currentMatch = src.match(/export const SEO_RELEASE_PHASE = (\d+);/);
+const currentPhase = currentMatch ? Number(currentMatch[1]) : NaN;
 
-if (next === src) {
-  console.error("Could not update SEO_RELEASE_PHASE in shared/seoMatrix.ts");
+if (!Number.isInteger(currentPhase)) {
+  console.error("Could not read SEO_RELEASE_PHASE in shared/seoMatrix.ts");
   process.exit(1);
 }
 
-fs.writeFileSync(MATRIX_PATH, next, "utf8");
-console.log(`✓ SEO_RELEASE_PHASE set to ${phase}`);
+if (currentPhase === phase) {
+  console.log(`✓ SEO_RELEASE_PHASE already ${phase} — regenerating sitemap`);
+} else {
+  const next = src.replace(/export const SEO_RELEASE_PHASE = \d+;/, `export const SEO_RELEASE_PHASE = ${phase};`);
+  fs.writeFileSync(MATRIX_PATH, next, "utf8");
+  console.log(`✓ SEO_RELEASE_PHASE set to ${phase}`);
+}
 
 execSync("pnpm run seo:sitemap", { stdio: "inherit", cwd: path.join(__dirname, "..") });
 
