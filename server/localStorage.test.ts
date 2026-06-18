@@ -12,15 +12,22 @@ describe("sanitizeUploadName", () => {
     expect(sanitizeUploadName("nested/dir/report.xlsx")).toBe("report.xlsx");
   });
 
-  it("replaces unsafe and non-latin characters with underscores", () => {
-    expect(sanitizeUploadName("счёт.pdf")).toBe("____.pdf");
-    expect(sanitizeUploadName("my file (1).docx")).toBe("my_file__1_.docx");
-    expect(sanitizeUploadName("файл")).not.toMatch(/[^a-zA-Z0-9._-]/);
+  it("replaces unsafe and non-latin characters with dashes", () => {
+    expect(sanitizeUploadName("счёт.pdf")).toBe(".pdf");
+    expect(sanitizeUploadName("my file (1).docx")).toBe("my-file-1-.docx");
+    expect(sanitizeUploadName("файл")).toBe("file");
   });
 
-  it("keeps latin letters, digits, dots, dashes and underscores", () => {
+  it("never produces underscores (they break MAX auto-links)", () => {
+    expect(sanitizeUploadName("photo_2026-06-17.jpg")).toBe(
+      "photo-2026-06-17.jpg"
+    );
+    expect(sanitizeUploadName("a_b_c.txt")).not.toMatch(/_/);
+  });
+
+  it("keeps latin letters, digits, dots and dashes (underscores become dashes)", () => {
     expect(sanitizeUploadName("Report-2024_v1.2.pdf")).toBe(
-      "Report-2024_v1.2.pdf"
+      "Report-2024-v1.2.pdf"
     );
   });
 
@@ -30,14 +37,18 @@ describe("sanitizeUploadName", () => {
 });
 
 describe("buildUploadKey", () => {
-  it("produces a timestamp_random_name key", () => {
-    expect(buildUploadKey("doc.pdf")).toMatch(/^\d+_[0-9a-f]{16}_doc\.pdf$/);
+  it("produces a timestamp-random-name key with dash separators", () => {
+    expect(buildUploadKey("doc.pdf")).toMatch(/^\d+-[0-9a-f]{16}-doc\.pdf$/);
   });
 
   it("applies filename sanitization inside the key", () => {
     expect(buildUploadKey("../secret report.pdf")).toMatch(
-      /^\d+_[0-9a-f]{16}_secret_report\.pdf$/
+      /^\d+-[0-9a-f]{16}-secret-report\.pdf$/
     );
+  });
+
+  it("never contains an underscore", () => {
+    expect(buildUploadKey("my_report v2.pdf")).not.toMatch(/_/);
   });
 
   it("generates a unique key on every call", () => {

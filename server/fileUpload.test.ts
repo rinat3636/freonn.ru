@@ -131,8 +131,9 @@ describe("handleUploadFile", () => {
     expect(body.success).toBe(true);
     expect(body.filename).toBe("doc.pdf");
     expect(body.url).toMatch(
-      /^https:\/\/freonn\.ru\/uploads\/\d+_[0-9a-f]{16}_doc\.pdf$/
+      /^https:\/\/freonn\.ru\/uploads\/\d+-[0-9a-f]{16}-doc\.pdf$/
     );
+    expect(body.url).not.toMatch(/_/);
 
     const key = body.url.split("/uploads/")[1];
     const stored = fs.readFileSync(path.join(tmpDir, key));
@@ -151,8 +152,9 @@ describe("uploadFileToLocal", () => {
     );
 
     expect(url).toMatch(
-      /^https:\/\/freonn\.ru\/uploads\/\d+_[0-9a-f]{16}_+\.pdf$/
+      /^https:\/\/freonn\.ru\/uploads\/\d+-[0-9a-f]{16}-\.pdf$/
     );
+    expect(url).not.toMatch(/_/);
     const key = url.split("/uploads/")[1];
     const stored = fs.readFileSync(path.join(tmpDir, key));
     expect(stored.equals(content)).toBe(true);
