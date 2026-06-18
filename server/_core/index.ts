@@ -9,7 +9,8 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { notifyOwner } from "./notification";
-import { uploadFileToLocal, getUploadDir } from "../localStorage";
+import { getUploadDir } from "../localStorage";
+import { handleUploadFile } from "../fileUpload";
 import { groqChat, groqChatStream, isGroqAvailable, GROQ_CONTENT_MODEL } from "../groq";
 import { getCityEntry } from "../../shared/geoRoutes";
 
@@ -162,19 +163,7 @@ async function startServer() {
 
   // File upload endpoint — stores file on local disk and returns a public URL
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
-  app.post("/api/upload-file", upload.single("file"), async (req: express.Request, res: express.Response) => {
-    try {
-      if (!req.file) {
-        res.status(400).json({ success: false, error: "Файл не получен" });
-        return;
-      }
-      const url = await uploadFileToLocal(req.file.buffer, req.file.originalname, req.file.mimetype);
-      res.json({ success: true, url, filename: req.file.originalname });
-    } catch (e) {
-      console.error("[upload-file] Error:", e);
-      res.status(500).json({ success: false, error: "Ошибка загрузки файла" });
-    }
-  });
+  app.post("/api/upload-file", upload.single("file"), handleUploadFile);
 
   // Form submission → MAX bot
   app.post("/api/submit-form", async (req, res) => {
