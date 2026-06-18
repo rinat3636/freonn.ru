@@ -9,7 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { notifyOwner } from "./notification";
-import { uploadFileToSupabase } from "../supabaseStorage";
+import { uploadFileToLocal, getUploadDir } from "../localStorage";
 import { groqChat, groqChatStream, isGroqAvailable, GROQ_CONTENT_MODEL } from "../groq";
 import { getCityEntry } from "../../shared/geoRoutes";
 
@@ -74,6 +74,9 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // Serve user-uploaded files from local disk
+  app.use("/uploads", express.static(getUploadDir(), { maxAge: "30d", index: false }));
 
   // ── 301-редиректы старых WordPress URL → правильные страницы ──────────────────────────
   const legacyRedirects: Record<string, string> = {
@@ -157,7 +160,7 @@ async function startServer() {
     }
   }
 
-  // File upload endpoint — stores file to S3 and returns URL
+  // File upload endpoint — stores file on local disk and returns a public URL
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
   app.post("/api/upload-file", upload.single("file"), async (req: express.Request, res: express.Response) => {
     try {
@@ -165,7 +168,7 @@ async function startServer() {
         res.status(400).json({ success: false, error: "Файл не получен" });
         return;
       }
-      const url = await uploadFileToSupabase(req.file.buffer, req.file.originalname, req.file.mimetype);
+      const url = await uploadFileToLocal(req.file.buffer, req.file.originalname, req.file.mimetype);
       res.json({ success: true, url, filename: req.file.originalname });
     } catch (e) {
       console.error("[upload-file] Error:", e);
