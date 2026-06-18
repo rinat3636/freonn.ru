@@ -6,7 +6,24 @@
  * every function returns null/false — the site never crashes.
  */
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+// Base URL for the Groq-compatible API. Override with GROQ_BASE_URL to route
+// requests through a non-RU reverse proxy (e.g. a Cloudflare Worker), since
+// Groq geo-blocks Russian IPs.
+const GROQ_BASE_URL = (process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/+$/, "");
+const GROQ_API_URL = `${GROQ_BASE_URL}/chat/completions`;
+
+// Optional shared secret sent to a self-hosted proxy (see deploy/groq-proxy-worker.js)
+// so the proxy is not an open relay. Ignored by Groq directly.
+const GROQ_PROXY_SECRET = process.env.GROQ_PROXY_SECRET || "";
+
+function buildHeaders(apiKey: string): Record<string, string> {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+  };
+  if (GROQ_PROXY_SECRET) headers["x-proxy-secret"] = GROQ_PROXY_SECRET;
+  return headers;
+}
 
 // Fast model for chat; powerful model for content generation
 export const GROQ_CHAT_MODEL = "llama-3.1-8b-instant";
@@ -55,10 +72,7 @@ export async function groqChat(
 
     const response = await fetch(GROQ_API_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: buildHeaders(apiKey),
       body: JSON.stringify({
         model,
         messages,
@@ -109,10 +123,7 @@ export async function* groqChatStream(
 
     const response = await fetch(GROQ_API_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: buildHeaders(apiKey),
       body: JSON.stringify({
         model,
         messages,
