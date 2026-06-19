@@ -6,7 +6,16 @@
  * every function returns null/false — the site never crashes.
  */
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_DEFAULT_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+// The Groq endpoint is configurable so the request can be routed through a relay
+// (e.g. a Cloudflare Worker) when the origin server's region is blocked by Groq.
+// Set GROQ_API_URL to the relay's /openai/v1/chat/completions URL; otherwise the
+// call goes straight to api.groq.com.
+export function getGroqApiUrl(): string {
+  const override = (process.env.GROQ_API_URL ?? "").trim();
+  return override || GROQ_DEFAULT_API_URL;
+}
 
 // Fast model for chat; powerful model for content generation
 export const GROQ_CHAT_MODEL = "llama-3.1-8b-instant";
@@ -53,7 +62,7 @@ export async function groqChat(
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-    const response = await fetch(GROQ_API_URL, {
+    const response = await fetch(getGroqApiUrl(), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -107,7 +116,7 @@ export async function* groqChatStream(
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 30000);
 
-    const response = await fetch(GROQ_API_URL, {
+    const response = await fetch(getGroqApiUrl(), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
