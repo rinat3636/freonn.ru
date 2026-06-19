@@ -141,15 +141,23 @@ export async function* groqChatStream(
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
+    // Network chunks don't align with SSE lines: a `data: {…}` line can be split
+    // across reads. Buffer the trailing partial line and only parse complete
+    // (newline-terminated) lines, otherwise tokens get dropped mid-word.
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split("\n").filter(line => line.startsWith("data: "));
+      buffer += decoder.decode(value, { stream: true });
 
-      for (const line of lines) {
+      let newlineIndex: number;
+      while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+        const line = buffer.slice(0, newlineIndex);
+        buffer = buffer.slice(newlineIndex + 1);
+
+        if (!line.startsWith("data: ")) continue;
         const data = line.slice(6).trim();
         if (data === "[DONE]") return;
         try {
