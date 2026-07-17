@@ -73,7 +73,7 @@ Disallow: /wp-content/
 Disallow: /wp-includes/
 Disallow: /wp-json/
 # Игнорировать рекламные параметры и UTM-метки, которые создают дубли
-Clean-param: etext ybaip p utm_source utm_medium utm_campaign utm_content utm_term /
+Clean-param: etext&ybaip&p&utm_source&utm_medium&utm_campaign&utm_content&utm_term
 Host: freonn.ru
 
 # Google
