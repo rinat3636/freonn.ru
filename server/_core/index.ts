@@ -132,7 +132,7 @@ async function startServer() {
       return res.redirect(301, legacyRedirects[pathname]);
     }
     // Паттерны WordPress и устаревших URL
-    if (/^\/(wp-content|wp-includes|wp-json|wp-admin|wp-login|shop\/|product\/)/i.test(req.path)) {
+    if (/^\/(wp-content|wp-includes|wp-json|wp-admin|wp-login|shop\/|product-category\/|product\/)/i.test(req.path)) {
       return res.redirect(301, "/uslugi");
     }
     // Старые каталоги услуг /services/:service/:object → /uslugi
