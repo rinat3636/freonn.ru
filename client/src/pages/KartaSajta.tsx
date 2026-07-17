@@ -1,11 +1,64 @@
 /*
- * Карта сайта — /karta-sajta (HTML-обзор основных URL + ссылка на sitemap-index.xml)
+ * Карта сайта — /karta-sajta (HTML-обзор основных URL + ссылки на XML-sitemap)
  */
-import { getKartaSajtaServiceGeoLinks } from "@shared/geoRoutes";
-import { getKartaSajtaTierCityLinks } from "@shared/geoTiers";
+import {
+  CITIES,
+  SERVICE_SLUGS,
+  SERVICE_SEO,
+  OBJECT_SLUGS,
+  CITY_BY_SLUG,
+  getKartaSajtaServiceGeoLinks,
+} from "@shared/geoRoutes";
+import { getKartaSajtaTierCityLinks, MATRIX_CITY_SLUGS } from "@shared/geoTiers";
+import {
+  OBJECT_SEO,
+  PRICE_CITY_SERVICES,
+  SERVICE_ALIASES,
+  buildPriceCityPath,
+  buildServiceAliasCityPath,
+} from "@shared/seoMatrix";
+import { CONTENT_PAGES } from "@shared/contentPages";
 import { CASE_STUDIES } from "@shared/caseStudies";
 import { useSEO } from "@/hooks/useSEO";
 import PageLayout from "@/components/PageLayout";
+
+const MATRIX_CITIES = MATRIX_CITY_SLUGS.map((slug) => CITY_BY_SLUG[slug]);
+
+// Полная внутренняя перелинковка для ускорения индексации landing-страниц
+const EXTRA_SECTIONS = [
+  {
+    title: "Все статьи /stati",
+    links: CONTENT_PAGES.map((p) => ({ href: `/stati/${p.slug}`, label: p.h1 })),
+  },
+  ...SERVICE_SLUGS.map((service) => ({
+    title: `${SERVICE_SEO[service].name} по городам`,
+    links: CITIES.map((city) => ({
+      href: `/${service}-${city.slug}`,
+      label: `${SERVICE_SEO[service].name} ${city.phrase}`,
+    })),
+  })),
+  ...SERVICE_SLUGS.map((service) => ({
+    title: `${SERVICE_SEO[service].name} по объектам`,
+    links: OBJECT_SLUGS.map((object) => ({
+      href: `/${service}-${object}`,
+      label: `${SERVICE_SEO[service].name} ${OBJECT_SEO[object].namePrep}`,
+    })),
+  })),
+  ...PRICE_CITY_SERVICES.map((service) => ({
+    title: `Цены на ${SERVICE_SEO[service].genitive} по городам`,
+    links: MATRIX_CITIES.map((city) => ({
+      href: buildPriceCityPath(service, city.slug),
+      label: `Цены на ${SERVICE_SEO[service].genitive} ${city.phrase}`,
+    })),
+  })),
+  ...SERVICE_ALIASES.map((alias) => ({
+    title: `${alias.name} по городам`,
+    links: MATRIX_CITIES.map((city) => ({
+      href: buildServiceAliasCityPath(alias.slug, city.slug),
+      label: `${alias.name} ${city.phrase}`,
+    })),
+  })),
+];
 
 const BASE_SECTIONS: { title: string; links: { href: string; label: string }[] }[] = [
   {
@@ -136,6 +189,22 @@ export default function KartaSajtaPage() {
                   {block.title}
                 </h2>
                 <ul className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2 font-body text-sm">
+                  {block.links.map((l) => (
+                    <li key={l.href}>
+                      <a href={l.href} className="text-[#2D3092] hover:text-[#B91C1C] transition-colors">
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            {EXTRA_SECTIONS.map((block) => (
+              <div key={block.title} className="md:col-span-2">
+                <h2 className="font-heading font-bold text-[#0F1340] text-lg mb-4 border-b border-gray-200 pb-2">
+                  {block.title}
+                </h2>
+                <ul className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2 font-body text-sm">
                   {block.links.map((l) => (
                     <li key={l.href}>
                       <a href={l.href} className="text-[#2D3092] hover:text-[#B91C1C] transition-colors">

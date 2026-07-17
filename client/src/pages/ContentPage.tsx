@@ -2,46 +2,35 @@ import { useRoute } from "wouter";
 import PageLayout from "@/components/PageLayout";
 import { useSEO } from "@/hooks/useSEO";
 import { CONTENT_PAGE_BY_SLUG, type ContentPage } from "@shared/contentPages";
+import { SERVICE_SEO, CITY_BY_SLUG } from "@shared/geoRoutes";
 import { Calendar, Clock, User, ArrowRight } from "lucide-react";
 
-const RELATED_LINKS: Record<string, { label: string; href: string }[]> = {
-  "Вентиляция": [
-    { label: "Монтаж вентиляции", href: "/ventilyaciya" },
-    { label: "Цены на вентиляцию", href: "/ceny/ventilyaciya" },
-    { label: "Вопросы и ответы", href: "/faq" },
-  ],
-  "Кондиционирование": [
-    { label: "Монтаж кондиционирования", href: "/kondicionirovanie" },
-    { label: "Цены на кондиционирование", href: "/ceny/kondicionirovanie" },
-    { label: "Блог", href: "/blog" },
-  ],
-  "Дымоудаление": [
-    { label: "Монтаж дымоудаления", href: "/dymoudalenie" },
-    { label: "Цены на дымоудаление", href: "/ceny/dymoudalenie" },
-    { label: "Контакты", href: "/contacts" },
-  ],
-  "Отопление": [
-    { label: "Монтаж отопления", href: "/otoplenie" },
-    { label: "Цены на отопление", href: "/ceny/otoplenie" },
-    { label: "Вопросы и ответы", href: "/faq" },
-  ],
-  "Электроснабжение": [
-    { label: "Монтаж электроснабжения", href: "/elektrosnabzhenie" },
-    { label: "Цены на электроснабжение", href: "/ceny/elektrosnabzhenie" },
-    { label: "Контакты", href: "/contacts" },
-  ],
-  "Холодоснабжение": [
-    { label: "Монтаж холодоснабжения", href: "/holodosnabzhenie" },
-    { label: "Цены на холодоснабжение", href: "/ceny/holodosnabzhenie" },
-    { label: "Вопросы и ответы", href: "/faq" },
-  ],
-  "Водоснабжение": [
-    { label: "Монтаж водоснабжения", href: "/vodosnabzhenie" },
-    { label: "Цены на водоснабжение", href: "/ceny/vodosnabzhenie" },
-    { label: "Вопросы и ответы", href: "/faq" },
-  ],
+const GEO_CITY_SLUGS = ["moskva", "moskovskaya-oblast", "khimki", "odintsovo", "lyubertsy"];
+const CATEGORY_SERVICE_SLUG: Record<string, keyof typeof SERVICE_SEO | undefined> = {
+  "Вентиляция": "ventilyaciya",
+  "Кондиционирование": "kondicionirovanie",
+  "Дымоудаление": "dymoudalenie",
+  "Отопление": "otoplenie",
+  "Электроснабжение": "elektrosnabzhenie",
+  "Холодоснабжение": "holodosnabzhenie",
+  "Водоснабжение": "vodosnabzhenie",
 };
 
+function getRelatedLinks(category: string): { label: string; href: string }[] {
+  const serviceSlug = CATEGORY_SERVICE_SLUG[category];
+  if (!serviceSlug) return [];
+  const service = SERVICE_SEO[serviceSlug];
+  const cities = GEO_CITY_SLUGS.map((slug) => CITY_BY_SLUG[slug]).filter(Boolean);
+  return [
+    { label: service.name, href: `/${serviceSlug}` },
+    { label: `Цены на ${service.genitive}`, href: `/ceny/${serviceSlug}` },
+    ...cities.map((city) => ({
+      label: `${service.name} ${city.phrase}`,
+      href: `/${serviceSlug}-${city.slug}`,
+    })),
+    { label: "Вопросы и ответы", href: "/faq" },
+  ];
+}
 export default function ContentPage() {
   const [, params] = useRoute("/stati/:slug");
   const slug = params?.slug || "";
@@ -146,11 +135,11 @@ export default function ContentPage() {
             </div>
           )}
 
-          {RELATED_LINKS[page.category] && (
+          {page.category && (
             <div className="max-w-4xl mt-14 pt-10 border-t border-gray-200">
               <h2 className="font-heading font-bold text-2xl text-[#0F1340] mb-4">Полезные ссылки</h2>
               <div className="flex flex-wrap gap-3">
-                {RELATED_LINKS[page.category].map((link) => (
+                {getRelatedLinks(page.category).map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
