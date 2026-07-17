@@ -320,7 +320,24 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Hashed assets: long-term immutable cache (Vite adds content hash to filename)
+  app.use(
+    "/assets",
+    express.static(path.resolve(distPath, "assets"), {
+      maxAge: "1y",
+      immutable: true,
+      index: false,
+    })
+  );
+
+  // Other static files (favicons, og-cover, webmanifest, sitemaps, robots, video)
+  // Cache for 1 day; sitemaps/robots are rebuilt on each deploy, but clients revalidate quickly.
+  app.use(
+    express.static(distPath, {
+      maxAge: "1d",
+      index: false,
+    })
+  );
 
   // SPA fallback: 200 для известных маршрутов, 404 для несуществующих
   app.use("*", async (req, res, next) => {
