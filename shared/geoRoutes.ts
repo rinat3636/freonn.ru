@@ -180,6 +180,7 @@ export const BLOG_SLUGS = new Set([
 
 export const PRICING_SLUGS = new Set([
   "ventilyaciya", "kondicionirovanie", "dymoudalenie", "peskostruj", "kompleks",
+  "montazh", "kompleksnaya-realizaciya",
 ]);
 
 export const VALID_STATIC_PATHS = new Set([
