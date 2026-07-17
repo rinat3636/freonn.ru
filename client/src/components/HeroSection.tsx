@@ -4,7 +4,6 @@
  * Brand: Freonn — dark navy #0F1340, red accent #B91C1C
  * Background: user video + team photo (2s) loop, blue overlay
  */
-import { motion } from "framer-motion";
 import { ArrowRight, FolderOpen, Tag, Phone } from "lucide-react";
 import { ymGoal } from "@/lib/ym";
 import { useEffect, useRef, useState } from "react";
@@ -163,14 +162,11 @@ export default function HeroSection() {
 
           {/* Right: quick links — hidden on mobile, shown from lg */}
           <div className="hidden lg:flex lg:col-span-2 flex-col gap-4">
-            {quickLinks.map((item, i) => (
-              <motion.a
+            {quickLinks.map((item) => (
+              <a
                 key={item.title}
                 href={item.href}
                 onClick={() => ymGoal("hero_quicklink_click", { link: item.title })}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + i * 0.12 }}
                 className="group flex items-start gap-4 bg-white/70 backdrop-blur-sm border border-[#B91C1C]/40 p-5 hover:bg-white/90 hover:border-[#B91C1C] transition-all duration-300 rounded-2xl shadow-sm"
               >
                 <div className="w-10 h-10 bg-[#B91C1C]/10 flex items-center justify-center group-hover:bg-[#B91C1C] transition-colors rounded-full flex-shrink-0">
@@ -183,14 +179,11 @@ export default function HeroSection() {
                   <p className="text-[#0F1340]/55 text-xs font-body leading-snug">{item.desc}</p>
                 </div>
                 <ArrowRight size={14} className="text-[#0F1340]/25 group-hover:text-[#B91C1C] flex-shrink-0 mt-1 transition-all group-hover:translate-x-1" />
-              </motion.a>
+              </a>
             ))}
 
             {/* Phone block */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.55 }}
+            <div
               className="bg-white/70 backdrop-blur-sm border border-[#B91C1C]/40 p-5 mt-2 rounded-2xl hover:border-[#B91C1C] transition-all duration-300 shadow-sm"
             >
               <div className="text-[#0F1340]/60 text-xs font-body mb-1 uppercase tracking-wider">Бесплатная консультация</div>
@@ -198,7 +191,7 @@ export default function HeroSection() {
                 8(800)101-2009
               </a>
               <div className="text-[#0F1340]/50 text-xs font-body mt-0.5">Бесплатно по России · Пн–Сб 9:00–19:00</div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Mobile: phone block below content */}
