@@ -15,11 +15,17 @@ import {
 
 export { SEO_RELEASE_PHASE };
 
-/** 301: alias URL → canonical URL */
+/** alias URL → canonical URL (SEO canonical + sitemap exclude) */
 export const CANONICAL_REDIRECTS: Record<string, string> = {
   "/garantiya": "/garantii",
   "/licenzii-i-sertifikaty": "/sertifikaty",
   "/partneram": "/partnery",
+  "/dokumenty": "/sertifikaty",
+  "/ceny-na-montazh-ventilyacii": "/ceny/ventilyaciya",
+  "/ceny-na-montazh-kondicionirovaniya": "/ceny/kondicionirovanie",
+  "/ceny-na-montazh-dymoudaleniya": "/ceny/dymoudalenie",
+  "/ceny-na-montazh-inzhenernyh-sistem": "/ceny/kompleks",
+  "/ceny-na-peskostruj": "/ceny/peskostruj",
 };
 
 export const SEO_PHASE_LABELS: Record<number, string> = {

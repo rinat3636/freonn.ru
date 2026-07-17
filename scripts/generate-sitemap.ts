@@ -114,15 +114,13 @@ for (const p of VALID_STATIC_PATHS) {
     )
   );
 }
+// /slovar and /kalkulyator-inzhenernyh-sistem are already in VALID_STATIC_PATHS;
+// add individual glossary term pages here.
 if (includeInSitemap("/slovar")) {
-  staticUrls.push(entry("/slovar", "0.7", "monthly"));
   for (const t of GLOSSARY_TERMS) {
     const p = `/slovar/${t.slug}`;
     if (includeInSitemap(p)) staticUrls.push(entry(p, "0.6", "monthly"));
   }
-}
-if (includeInSitemap("/kalkulyator-inzhenernyh-sistem")) {
-  staticUrls.push(entry("/kalkulyator-inzhenernyh-sistem", "0.7", "monthly"));
 }
 for (const c of CASE_STUDIES) {
   const p = `/kejs/${c.slug}`;
@@ -202,7 +200,7 @@ for (const g of groups) {
 }
 
 for (const f of fs.readdirSync(OUT_DIR)) {
-  if (f.startsWith("sitemap") && f.endsWith(".xml") && !indexFiles.includes(f) && f !== "sitemap-index.xml" && f !== "sitemap.xml") {
+  if (f.startsWith("sitemap") && f.endsWith(".xml") && !indexFiles.includes(f) && f !== "sitemap-index.xml") {
     fs.unlinkSync(path.join(OUT_DIR, f));
     console.log(`  removed orphan ${f}`);
   }
@@ -210,5 +208,4 @@ for (const f of fs.readdirSync(OUT_DIR)) {
 
 const indexXml = renderIndex(indexFiles);
 fs.writeFileSync(path.join(OUT_DIR, "sitemap-index.xml"), indexXml, "utf8");
-fs.writeFileSync(path.join(OUT_DIR, "sitemap.xml"), indexXml, "utf8");
 console.log(`\n✓ Total: ${total} URL (SEO phase ${SEO_RELEASE_PHASE}, index only — no monolithic urlset)`);

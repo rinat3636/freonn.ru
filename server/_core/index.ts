@@ -79,6 +79,16 @@ async function startServer() {
   // Serve user-uploaded files from local disk
   app.use("/uploads", express.static(getUploadDir(), { maxAge: "30d", index: false }));
 
+  // ── collapse multiple slashes (e.g. //checkout/) and 301 to canonical path ─────────────
+  app.use((req, res, next) => {
+    const cleanPath = req.path.replace(/\/{2,}/g, "/");
+    if (cleanPath !== req.path) {
+      const rest = req.url.slice(req.path.length);
+      return res.redirect(301, cleanPath + rest);
+    }
+    next();
+  });
+
   // ── 301-редиректы старых WordPress URL → правильные страницы ──────────────────────────
   const legacyRedirects: Record<string, string> = {
     "/shop":         "/uslugi",
@@ -91,8 +101,9 @@ async function startServer() {
     "/store":        "/uslugi",
     "/feed":         "/",
     "/xmlrpc.php":   "/",
-    "/sitemap_index.xml": "/sitemap.xml",
-    "/about":        "/o-kompanii",
+    "/sitemap_index.xml": "/sitemap-index.xml",
+    "/sitemap.xml":      "/sitemap-index.xml",
+    "/about":            "/o-kompanii",
     "/garantiya":    "/garantii",
     "/licenzii-i-sertifikaty": "/sertifikaty",
     "/partneram":    "/partnery",

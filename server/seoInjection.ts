@@ -29,8 +29,10 @@ import {
   resolveServiceSlugFromPath,
   SERVICE_OBJECT_STATIC_FAQ,
 } from "../shared/serviceFaq";
+import { getStaticPageJsonLd, getStaticSeoMeta } from "./staticSeo";
 
 export { shouldOmitGeoMeta, NOINDEX_PATHS } from "../shared/geoRoutes";
+export { getStaticSeoMeta };
 
 export function isNoIndexPath(pathname: string): boolean {
   const clean = normalizePathname(pathname);
@@ -286,6 +288,9 @@ export function buildPageJsonLd(pathname: string): object[] | null {
       }
     }
   }
+
+  const staticLd = getStaticPageJsonLd(pathname);
+  if (staticLd) return staticLd;
 
   return null;
 }
