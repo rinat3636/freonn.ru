@@ -184,10 +184,20 @@ const groups: { file: string; urls: UrlEntry[] }[] = [
   { file: "sitemap-blog.xml", urls: blogUrls },
 ];
 
+// Deduplicate URLs across sitemaps; first group wins (highest priority first)
+const seenLocs = new Set<string>();
+const uniqueGroups = groups.map((g) => ({
+  file: g.file,
+  urls: g.urls.filter((u) => {
+    if (seenLocs.has(u.loc)) return false;
+    seenLocs.add(u.loc);
+    return true;
+  }),
+}));
 
 let total = 0;
 const indexFiles: string[] = [];
-for (const g of groups) {
+for (const g of uniqueGroups) {
   const outPath = path.join(OUT_DIR, g.file);
   if (g.urls.length === 0) {
     if (fs.existsSync(outPath)) fs.unlinkSync(outPath);
