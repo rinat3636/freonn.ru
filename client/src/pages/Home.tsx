@@ -5,7 +5,7 @@
 import { useSEO } from "@/hooks/useSEO";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
 
 const BelowFoldPlaceholder = () => (
@@ -14,6 +14,7 @@ const BelowFoldPlaceholder = () => (
 
 export default function Home() {
   const [HomeBelowFold, setHomeBelowFold] = useState<ComponentType | null>(null);
+  const placeholderRef = useRef<HTMLDivElement>(null);
 
   useSEO({
     title: "Freonn — инженерная компания | Монтаж вентиляции, кондиционирования в Москве",
@@ -36,17 +37,36 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Откладываем загрузку нижних секций, чтобы не конкурировать за сеть/CPU
-    // с критичным First Contentful / Largest Contentful Paint (хедер + hero).
+    // Загружаем нижние секции только при приближении к viewport или по таймауту.
+    // Это освобождает сеть/CPU для критичного First/Largest Contentful Paint.
     const load = () => {
       import("./HomeBelowFold").then((m) => setHomeBelowFold(() => m.default));
     };
 
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    // На мобильном даём больше времени для отрисовки hero; на десктопе — меньше.
-    const delay = isMobile ? 2200 : 800;
-    const timer = setTimeout(load, delay);
-    return () => clearTimeout(timer);
+    // Fallback: загрузить через 8 секунд, даже если никто не скроллил.
+    const fallbackTimer = setTimeout(load, 8000);
+
+    if ("IntersectionObserver" in window) {
+      const el = placeholderRef.current;
+      if (!el) return () => clearTimeout(fallbackTimer);
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            load();
+            observer.disconnect();
+            clearTimeout(fallbackTimer);
+          }
+        },
+        { rootMargin: "0px 0px 200px 0px" }
+      );
+      observer.observe(el);
+      return () => {
+        observer.disconnect();
+        clearTimeout(fallbackTimer);
+      };
+    }
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   return (
@@ -54,7 +74,9 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <HeroSection />
-        {HomeBelowFold ? <HomeBelowFold /> : <BelowFoldPlaceholder />}
+        <div ref={placeholderRef}>
+          {HomeBelowFold ? <HomeBelowFold /> : <BelowFoldPlaceholder />}
+        </div>
       </main>
     </div>
   );
