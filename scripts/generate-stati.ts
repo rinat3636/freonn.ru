@@ -9,9 +9,9 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = "llama-3.3-70b-versatile";
+const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
 const API_KEY = process.env.GROQ_API_KEY ?? "";
-const DELAY_MS = 12000;
+const DELAY_MS = Number(process.env.GROQ_DELAY_MS ?? "45000");
 
 const TOPICS = [
   {
@@ -132,8 +132,8 @@ faq: 3–4 вопроса/ответа по теме, кратко и по де�
 
   const parsed = JSON.parse(match[0]) as { title?: string; description?: string; h1?: string; html?: string; faq?: FaqItem[] };
   if (!parsed.title || !parsed.html) {
-    console.error(`  ✗ ${topic.slug}: incomplete JSON`);
-    return null;
+    console.error(`  raw (${raw.length} chars):`, raw.slice(0, 600));
+    throw new Error("incomplete JSON");
   }
 
   return {
