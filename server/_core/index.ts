@@ -108,6 +108,14 @@ async function startServer() {
     "/licenzii-i-sertifikaty": "/sertifikaty",
     "/partneram":    "/partnery",
     "/sotrudniki":   "/team",
+    "/favorites":    "/",
+    "/ceny/postavka-oborudovaniya": "/ceny",
+    "/ceny-na-montazh-ventilyacii": "/ceny/ventilyaciya",
+    "/ceny-na-montazh-kondicionirovaniya": "/ceny/kondicionirovanie",
+    "/ceny-na-montazh-dymoudaleniya": "/ceny/dymoudalenie",
+    "/ceny-na-montazh-inzhenernyh-sistem": "/ceny/kompleksnaya-realizaciya",
+    "/ceny-na-peskostruj": "/ceny/peskostruj",
+    "/elektrosnabzhenie-i-osveshchenie": "/elektrosnabzhenie",
   };
   app.use((req, res, next) => {
     const pathname = req.path.replace(/\/$/, "") || "/";
