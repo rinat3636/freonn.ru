@@ -1,7 +1,7 @@
 # robots.txt — freonn.ru
 # Инженерная компания Freonn | ООО «ЭКС»
 # Монтаж инженерных систем в Москве и МО
-# Обновлено: 2026-06-09
+# Обновлено: 2026-07-17
 
 User-agent: *
 Allow: /
@@ -10,14 +10,8 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
-Disallow: /oplata-i-dostavka
-Disallow: /video-kejsy
-Disallow: /poleznye-materialy
 Disallow: /favorites
 Disallow: /favorites/
-# Закрываем несуществующие страницы
-Disallow: /about
-Disallow: /about/
 # Закрываем старые WordPress/WooCommerce URL
 Disallow: /shop
 Disallow: /shop/
@@ -46,13 +40,8 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
-Disallow: /oplata-i-dostavka
-Disallow: /video-kejsy
-Disallow: /poleznye-materialy
 Disallow: /favorites
 Disallow: /favorites/
-Disallow: /about
-Disallow: /about/
 Disallow: /shop
 Disallow: /shop/
 Disallow: /cart
@@ -82,13 +71,8 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
-Disallow: /oplata-i-dostavka
-Disallow: /video-kejsy
-Disallow: /poleznye-materialy
 Disallow: /favorites
 Disallow: /favorites/
-Disallow: /about
-Disallow: /about/
 Disallow: /shop
 Disallow: /shop/
 Disallow: /cart
@@ -115,13 +99,8 @@ Disallow: /404
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
-Disallow: /oplata-i-dostavka
-Disallow: /video-kejsy
-Disallow: /poleznye-materialy
 Disallow: /favorites
 Disallow: /favorites/
-Disallow: /about
-Disallow: /about/
 Disallow: /shop
 Disallow: /shop/
 Disallow: /cart
