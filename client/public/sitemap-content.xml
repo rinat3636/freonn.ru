@@ -150,4 +150,34 @@
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
+  <url>
+    <loc>https://freonn.ru/stati/ventilyaciya-dlya-medicheskogo-centra</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/kondicionirovanie-dlya-servernoj</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/raschet-vozduhoobmena-dlya-ofisa</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/vibroizolyaciya-ventilyacii-i-kondicionerov</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/avtomatizaciya-ovik</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
 </urlset>
