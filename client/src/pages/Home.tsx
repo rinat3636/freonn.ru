@@ -5,11 +5,16 @@
 import { useSEO } from "@/hooks/useSEO";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import { lazy, Suspense } from "react";
+import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
 
-const HomeBelowFold = lazy(() => import("./HomeBelowFold"));
+const BelowFoldPlaceholder = () => (
+  <div className="min-h-[800px] bg-[#F7F8FF] animate-pulse" aria-hidden="true" />
+);
 
 export default function Home() {
+  const [HomeBelowFold, setHomeBelowFold] = useState<ComponentType | null>(null);
+
   useSEO({
     title: "Freonn — инженерная компания | Монтаж вентиляции, кондиционирования в Москве",
     description: "Freonn — проектирование, монтаж и обслуживание вентиляции, кондиционирования, дымоудаления, отопления и электроснабжения в Москве и МО. Более 1280 объектов. Гарантия 1 год на монтажные работы. Бесплатный выезд инженера.",
@@ -30,18 +35,26 @@ export default function Home() {
     },
   });
 
+  useEffect(() => {
+    // Откладываем загрузку нижних секций, чтобы не конкурировать за сеть/CPU
+    // с критичным First Contentful / Largest Contentful Paint (хедер + hero).
+    const load = () => {
+      import("./HomeBelowFold").then((m) => setHomeBelowFold(() => m.default));
+    };
+
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    // На мобильном даём больше времени для отрисовки hero; на десктопе — меньше.
+    const delay = isMobile ? 2200 : 800;
+    const timer = setTimeout(load, delay);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
         <HeroSection />
-        <Suspense
-          fallback={
-            <div className="min-h-[800px] bg-[#F7F8FF] animate-pulse" aria-hidden="true" />
-          }
-        >
-          <HomeBelowFold />
-        </Suspense>
+        {HomeBelowFold ? <HomeBelowFold /> : <BelowFoldPlaceholder />}
       </main>
     </div>
   );
