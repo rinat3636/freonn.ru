@@ -28,6 +28,7 @@ export default function ReviewsPage() {
     }
     ymGoal("review_submit", { rating: form.rating });
     gaEvent("review_submit", { rating: form.rating, name: form.name });
+    gaEvent("generate_lead", { method: "review_submit", rating: form.rating, page_path: window.location.pathname });
     toast.success("Спасибо! Ваш отзыв отправлен на модерацию.");
     setForm({ name: "", company: "", email: "", text: "", rating: 5 });
   };

@@ -25,6 +25,11 @@ function trackInteraction(href: string, label?: string) {
 
   ymGoal(type, { target: name });
   gaEvent(type, { method: name, link_url: href });
+
+  // Phone, email and WhatsApp are direct lead intents — also count as generate_lead
+  if (type === "phone_click" || type === "email_click" || type === "whatsapp_click") {
+    gaEvent("generate_lead", { method: type, link_url: href, page_path: window.location.pathname });
+  }
 }
 
 export function useAnalytics() {
