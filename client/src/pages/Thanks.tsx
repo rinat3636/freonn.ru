@@ -154,7 +154,6 @@ export default function ThanksPage() {
           >
             <a
               href="tel:88001012009"
-              onClick={() => ymGoal("phone_click")}
               className="inline-flex items-center justify-center gap-2 bg-[#B91C1C] text-white px-8 py-3.5 rounded-full font-heading font-semibold uppercase tracking-wide hover:bg-[#a01818] transition-colors"
             >
               <Phone className="w-4 h-4" />

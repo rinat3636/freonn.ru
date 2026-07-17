@@ -75,7 +75,7 @@ export default function Footer() {
               Инженерная компания Freonn — проектирование, монтаж и обслуживание инженерных систем для промышленности, бизнеса и премиум недвижимости в Москве и Московской области.
             </p>
             <div className="space-y-2.5 mb-6">
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm font-body">
+              <a href="tel:88001012009" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm font-body">
                 <Phone size={14} className="text-[#B91C1C] flex-shrink-0" /> 8(800)101-2009
               </a>
               <a href="mailto:freonn@internet.ru" onClick={() => ymGoal("email_click")} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm font-body">

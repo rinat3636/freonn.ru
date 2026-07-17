@@ -200,7 +200,7 @@ export default function HeroSection() {
               className="bg-white/70 backdrop-blur-sm border border-[#B91C1C]/40 p-5 mt-2 rounded-2xl hover:border-[#B91C1C] transition-all duration-300 shadow-sm"
             >
               <div className="text-[#0F1340]/60 text-xs font-body mb-1 uppercase tracking-wider">Бесплатная консультация</div>
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="font-heading font-bold text-[#0F1340] text-xl hover:text-[#B91C1C] transition-colors">
+              <a href="tel:88001012009" className="font-heading font-bold text-[#0F1340] text-xl hover:text-[#B91C1C] transition-colors">
                 8(800)101-2009
               </a>
               <div className="text-[#0F1340]/50 text-xs font-body mt-0.5">Бесплатно по России · Пн–Сб 9:00–19:00</div>
@@ -211,7 +211,7 @@ export default function HeroSection() {
           <div className="lg:hidden col-span-full">
             <div className="bg-white/70 backdrop-blur-sm border border-[#B91C1C]/40 p-4 rounded-2xl shadow-sm">
               <div className="text-[#0F1340]/60 text-xs font-body mb-1 uppercase tracking-wider">Бесплатная консультация</div>
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="font-heading font-bold text-[#0F1340] text-lg">
+              <a href="tel:88001012009" className="font-heading font-bold text-[#0F1340] text-lg">
                 8(800)101-2009
               </a>
               <div className="text-[#0F1340]/50 text-xs font-body mt-0.5">Бесплатно по России · Пн–Сб 9:00–19:00</div>

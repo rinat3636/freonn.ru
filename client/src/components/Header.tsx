@@ -309,7 +309,7 @@ export default function Header() {
             </div>
             {/* Contact info */}
             <div className="px-4 py-4 bg-[#B91C1C]/10 border-b border-white/10">
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="flex items-center gap-2 text-white font-heading font-semibold text-lg mb-1">
+              <a href="tel:88001012009" className="flex items-center gap-2 text-white font-heading font-semibold text-lg mb-1">
                 <Phone size={18} className="text-[#B91C1C]" /> 8(800)101-2009
               </a>
               <p className="text-white/50 text-xs font-body">Бесплатно по России · Пн-Сб 9:00–19:00</p>

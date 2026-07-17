@@ -78,7 +78,7 @@ export default function NotFound() {
                 <Home size={16} /> На главную
               </button>
               <a
-                href="tel:88001012009" onClick={() => ymGoal("phone_click")}
+                href="tel:88001012009"
                 className="btn-dark inline-flex items-center gap-2 justify-center"
               >
                 <Phone size={16} /> 8(800)101-2009

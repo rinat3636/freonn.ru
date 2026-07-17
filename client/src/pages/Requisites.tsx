@@ -101,7 +101,7 @@ export default function RequisitesPage() {
           <div className="mt-6 bg-[#F7F8FF] rounded-2xl p-5">
             <p className="text-gray-500 font-body text-sm text-center">
               Для получения счёта, договора или закрывающих документов — свяжитесь с нами по телефону{" "}
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="text-[#2D3092] font-semibold hover:underline">8(800)101-2009</a>{" "}
+              <a href="tel:88001012009" className="text-[#2D3092] font-semibold hover:underline">8(800)101-2009</a>{" "}
               или по email{" "}
               <a href="mailto:freonn@internet.ru" className="text-[#2D3092] font-semibold hover:underline">freonn@internet.ru</a>
             </p>

@@ -219,7 +219,7 @@ export default function CityPage({ city }: CityPageProps) {
                 <a href="/contacts" className="btn-dark inline-flex items-center gap-2 justify-center">
                   Вызвать инженера <ArrowRight size={16} />
                 </a>
-                <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="btn-dark inline-flex items-center gap-2 justify-center">
+                <a href="tel:88001012009" className="btn-dark inline-flex items-center gap-2 justify-center">
                   <Phone size={16} /> 8(800)101-2009
                 </a>
               </div>
@@ -468,7 +468,7 @@ export default function CityPage({ city }: CityPageProps) {
             <a href="/contacts" className="btn-dark inline-flex items-center gap-2 justify-center">
               Получить расчёт <ArrowRight size={16} />
             </a>
-            <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="btn-outline border-white/30 text-white hover:bg-white/10 inline-flex items-center gap-2 justify-center">
+            <a href="tel:88001012009" className="btn-outline border-white/30 text-white hover:bg-white/10 inline-flex items-center gap-2 justify-center">
               8(800)101-2009
             </a>
           </div>

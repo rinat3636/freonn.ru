@@ -321,7 +321,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <div className="text-white/60 text-xs font-body mb-0.5">Телефон</div>
-                    <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="text-white font-heading font-semibold text-lg hover:text-[#B91C1C] transition-colors">
+                    <a href="tel:88001012009" className="text-white font-heading font-semibold text-lg hover:text-[#B91C1C] transition-colors">
                       8(800)101-2009
                     </a>
                     <div className="text-white/50 text-xs font-body">Бесплатно по России</div>

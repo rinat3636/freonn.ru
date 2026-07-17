@@ -59,7 +59,6 @@ export default function FloatingButtons() {
         {/* Phone */}
         <motion.a
           href="tel:88001012009"
-          onClick={() => ymGoal("phone_click")}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.8 }}
