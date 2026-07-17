@@ -95,7 +95,7 @@ const articles = [
     category: "Вентиляция",
     readTime: "5 минут",
     img: `${CDN}/ru-industrial-ventilation_4939c0aa.jpg`,
-    href: "/blog/ventilyaciya-avtostoyankи",
+    href: "/blog/ventilyaciya-avtostoyanka",
     excerpt: "Вентиляция паркинга — обязательное требование пожарной безопасности. Рассматриваем нормативы, схемы и оборудование для подземных и надземных стоянок.",
   },
   {
