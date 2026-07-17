@@ -1,7 +1,7 @@
 # robots.txt — freonn.ru
 # Инженерная компания Freonn | ООО «ЭКС»
 # Монтаж инженерных систем в Москве и МО
-# Обновлено: 2026-07-17
+# Обновлено: 2026-07-17 (v2 — разрешён обход старых WooCommerce-URL для 301-редиректа)
 
 User-agent: *
 Allow: /
@@ -12,19 +12,9 @@ Disallow: /auth/
 Disallow: /spasibo
 Disallow: /favorites
 Disallow: /favorites/
-# Закрываем старые WordPress/WooCommerce URL
-Disallow: /shop
-Disallow: /shop/
-Disallow: /cart
-Disallow: /cart/
-Disallow: /checkout
-Disallow: /checkout/
-Disallow: /product
-Disallow: /product/
-Disallow: /products
-Disallow: /products/
-Disallow: /store
-Disallow: /store/
+# Старые WooCommerce-URL (shop/product/cart/checkout/store) теперь 301 → /uslugi,
+# поэтому Disallow убран, чтобы робот увидел редирект и убрал страницы из индекса.
+# Закрываем только системные WordPress-URL
 Disallow: /wp-admin
 Disallow: /wp-admin/
 Disallow: /wp-login.php
@@ -42,25 +32,14 @@ Disallow: /auth/
 Disallow: /spasibo
 Disallow: /favorites
 Disallow: /favorites/
-Disallow: /shop
-Disallow: /shop/
-Disallow: /cart
-Disallow: /cart/
-Disallow: /checkout
-Disallow: /checkout/
-Disallow: /product
-Disallow: /product/
-Disallow: /products
-Disallow: /products/
-Disallow: /store
-Disallow: /store/
+# Старые WooCommerce-URL (shop/product/cart/checkout/store) 301 → /uslugi
 Disallow: /wp-admin/
 Disallow: /wp-login.php
 Disallow: /wp-content/
 Disallow: /wp-includes/
 Disallow: /wp-json/
 # Игнорировать рекламные параметры и UTM-метки, которые создают дубли
-Clean-param: etext&ybaip&p&utm_source&utm_medium&utm_campaign&utm_content&utm_term
+Clean-param: etext&ybaip&p&utm_source&utm_medium&utm_campaign&utm_content&utm_term&add-to-cart
 Host: freonn.ru
 
 # Google
@@ -73,18 +52,7 @@ Disallow: /auth/
 Disallow: /spasibo
 Disallow: /favorites
 Disallow: /favorites/
-Disallow: /shop
-Disallow: /shop/
-Disallow: /cart
-Disallow: /cart/
-Disallow: /checkout
-Disallow: /checkout/
-Disallow: /product
-Disallow: /product/
-Disallow: /products
-Disallow: /products/
-Disallow: /store
-Disallow: /store/
+# Старые WooCommerce-URL 301 → /uslugi
 Disallow: /wp-admin/
 Disallow: /wp-login.php
 Disallow: /wp-content/
@@ -101,18 +69,7 @@ Disallow: /auth/
 Disallow: /spasibo
 Disallow: /favorites
 Disallow: /favorites/
-Disallow: /shop
-Disallow: /shop/
-Disallow: /cart
-Disallow: /cart/
-Disallow: /checkout
-Disallow: /checkout/
-Disallow: /product
-Disallow: /product/
-Disallow: /products
-Disallow: /products/
-Disallow: /store
-Disallow: /store/
+# Старые WooCommerce-URL 301 → /uslugi
 Disallow: /wp-admin/
 Disallow: /wp-login.php
 Disallow: /wp-content/
