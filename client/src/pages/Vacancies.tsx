@@ -115,6 +115,44 @@ const benefits = [
   "Дружный коллектив профессионалов",
 ];
 
+const parseSalaryMin = (salary: string): number => {
+  const digits = salary.replace(/[^\d]/g, "");
+  return digits ? Number(digits) : 0;
+};
+
+const jobPostings = vacancies.map((v, i) => ({
+  "@context": "https://schema.org",
+  "@type": "JobPosting" as const,
+  "@id": `https://freonn.ru/vakansii#jobposting-${i}`,
+  title: v.title,
+  description: `${v.title}. ${v.duties.join(" ")}`,
+  url: "https://freonn.ru/vakansii",
+  hiringOrganization: { "@id": "https://freonn.ru/#organization" },
+  jobLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "ул. Ленина, д. 2Б",
+      addressLocality: "Дзержинский",
+      addressRegion: "Московская обл.",
+      postalCode: "143500",
+      addressCountry: "RU",
+    },
+  },
+  employmentType: "FULL_TIME",
+  datePosted: "2026-07-17",
+  validThrough: "2026-12-31",
+  baseSalary: {
+    "@type": "MonetaryAmount",
+    currency: "RUB",
+    value: {
+      "@type": "QuantitativeValue",
+      minValue: parseSalaryMin(v.salary),
+      unitText: "MONTH",
+    },
+  },
+}));
+
 export default function VacanciesPage() {
 
   useSEO({
@@ -123,24 +161,7 @@ export default function VacanciesPage() {
     keywords: "вакансии монтажник вентиляции, работа инженер Москва, вакансии инженерная компания",
     canonical: "/vakansii",
     breadcrumbs: [{ name: "Вакансии", url: "/vakansii" }],
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "JobPosting",
-      "@id": "https://freonn.ru/vakansii#jobposting",
-      title: "Инженер-проектировщик ОВиК",
-      description: "Открытые вакансии в Freonn: монтажники вентиляции, инженеры-проектировщики, менеджеры.",
-      hiringOrganization: { "@id": "https://freonn.ru/#organization" },
-      jobLocation: {
-        "@type": "Place",
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Москва",
-          addressCountry: "RU",
-        },
-      },
-      employmentType: "FULL_TIME",
-      datePosted: "2026-01-01",
-    },
+    jsonLd: jobPostings,
   });
   return (
     <PageLayout
