@@ -42,6 +42,7 @@ const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const ThanksPage = lazy(() => import("./pages/Thanks"));
 const PolitikaKonfidencialnostiPage = lazy(() => import("./pages/PolitikaKonfidencialnosti"));
 const KartaSajtaPage = lazy(() => import("./pages/KartaSajta"));
+const TermsOfServicePage = lazy(() => import("./pages/TermsOfService"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
 const ContentIndexPage = lazy(() => import("./pages/ContentIndexPage"));
 const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
@@ -170,6 +171,7 @@ function Router() {
       <Route path={"/auth/app-callback"} component={AppCallback} />
       <Route path={"/politika-konfidencialnosti"} component={PolitikaKonfidencialnostiPage} />
       <Route path={"/karta-sajta"} component={KartaSajtaPage} />
+      <Route path={"/polzovatelskoe-soglashenie"} component={TermsOfServicePage} />
       <Route path={"/slovar"} component={GlossaryPage} />
       <Route path={"/slovar/:slug"}>
         {(params) => <GlossaryTermPage slug={params.slug || ""} />}

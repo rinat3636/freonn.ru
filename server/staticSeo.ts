@@ -127,6 +127,12 @@ const STATIC_PAGE_SEO: Record<string, PageSeoMeta> = {
     keywords:
       "политика конфиденциальности Freonn, персональные данные, обработка cookies",
   },
+  "/polzovatelskoe-soglashenie": {
+    title: "Пользовательское соглашение — Freonn",
+    description:
+      "Условия использования сайта freonn.ru: права и обязанности пользователей, ответственность, персональные данные и порядок разрешения споров.",
+    keywords: "пользовательское соглашение Freonn, условия использования сайта",
+  },
   "/slovar": {
     title: "Словарь ОВиК — термины инженерных систем — Freonn",
     description:
