@@ -45,6 +45,7 @@ const PolitikaKonfidencialnostiPage = lazy(() => import("./pages/PolitikaKonfide
 const KartaSajtaPage = lazy(() => import("./pages/KartaSajta"));
 const TermsOfServicePage = lazy(() => import("./pages/TermsOfService"));
 const ReviewsPage = lazy(() => import("./pages/ReviewsPage"));
+const TeamPage = lazy(() => import("./pages/TeamPage"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
 const ContentIndexPage = lazy(() => import("./pages/ContentIndexPage"));
 const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
@@ -128,18 +129,9 @@ function Router() {
         )}
       </Route>
       <Route path={"/sotrudniki"}>
-        {() => (
-          <ComingSoon
-            title="Сотрудники"
-            breadcrumb={[{ label: "Сотрудники" }]}
-            body="Команда Freonn — инженеры, проектировщики и монтажники с опытом на промышленных и коммерческих объектах. Полный раздел с фото и биографиями готовится к публикации."
-            links={[
-              { label: "О компании", href: "/o-kompanii" },
-              { label: "Вакансии", href: "/vakansii" },
-            ]}
-          />
-        )}
+        <Redirect to="/team" />
       </Route>
+      <Route path={"/team"} component={TeamPage} />
       <Route path={"/video-kejsy"}>
         {() => (
           <ComingSoon
