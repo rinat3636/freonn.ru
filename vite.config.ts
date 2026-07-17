@@ -176,15 +176,29 @@ export default defineConfig(({ mode }) => {
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React runtime — cached separately
-          "react-vendor": ["react", "react-dom"],
-          // Routing
-          "router": ["wouter"],
-          // Animation library
-          "motion": ["framer-motion"],
-          // Icons
-          "icons": ["lucide-react"],
+        manualChunks(id) {
+          // node_modules — split into topic-specific chunks for caching and parallel loading
+          if (id.includes("node_modules")) {
+            if (id.includes("react-dom")) return "react-dom";
+            if (id.includes("/react/") || id.includes("scheduler")) return "react";
+            if (id.includes("framer-motion")) return "motion";
+            if (id.includes("lucide-react")) return "icons";
+            if (id.includes("wouter")) return "router";
+            if (id.includes("@tanstack")) return "tanstack";
+            if (id.includes("react-hook-form")) return "forms";
+            if (id.includes("zod")) return "zod";
+            if (id.includes("recharts")) return "charts";
+            if (id.includes("embla-carousel")) return "carousel";
+            if (id.includes("sonner")) return "sonner";
+            if (id.includes("next-themes")) return "themes";
+            if (id.includes("@radix-ui")) return "radix";
+            if (id.includes("@trpc")) return "trpc";
+            if (id.includes("@supabase")) return "supabase";
+            if (id.includes("axios")) return "http";
+            if (id.includes("date-fns")) return "dates";
+            if (id.includes("class-variance-authority") || id.includes("clsx") || id.includes("tailwind-merge")) return "utils";
+            return "vendor";
+          }
         },
       },
     },
