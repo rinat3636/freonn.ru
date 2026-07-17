@@ -178,6 +178,8 @@ function injectServerSeo(html: string, pathname: string, status: number) {
   const jsonLd = status === 200 ? buildPageJsonLd(pathname) : null;
   if (jsonLd) {
     next = injectPageJsonLd(next, jsonLd);
+  } else if (status === 200) {
+    next = injectPageJsonLd(next, []);
   }
 
   const seo = getServerSeo(pathname, status);
