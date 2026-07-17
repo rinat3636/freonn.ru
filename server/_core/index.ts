@@ -139,9 +139,13 @@ async function startServer() {
     if (/^\/services\//i.test(req.path)) {
       return res.redirect(301, "/uslugi");
     }
-    // Старый кириллический /бренд/... → /brendy
-    if (/^\/бренд\//i.test(req.path)) {
+    // Старый /бренд/ (кириллический) и латинский /brend/... → /brendy
+    if (/^\/(бренд|brend)\//i.test(req.path)) {
       return res.redirect(301, "/brendy");
+    }
+    // Опечатка в блоге: ventilyaciya-avtostoyank<буква> → ventilyaciya-avtostoyanka
+    if (/^\/blog\/ventilyaciya-avtostoyank[^a-zA-Z0-9_-]/i.test(req.path)) {
+      return res.redirect(301, "/blog/ventilyaciya-avtostoyanka");
     }
     // WordPress рубрики, метки, авторы, пагинация, фид
     if (/^\/(category|tag|author|page|feed)\//i.test(req.path)) {
