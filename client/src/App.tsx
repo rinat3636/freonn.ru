@@ -1,50 +1,55 @@
+import { lazy, Suspense, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import PreloaderScreen from "./components/PreloaderScreen";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch, Redirect } from "wouter";
+import PreloaderScreen from "./components/PreloaderScreen";
+import SuspenseFallback from "./components/SuspenseFallback";
+import NotFound from "@/pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FreonnAuthProvider } from "./contexts/FreonnAuthContext";
 import UnifiedLoginPage from "./components/freonn-group/UnifiedLoginPage";
+import AppCallback from "./pages/auth/AppCallback";
 import Home from "./pages/Home";
 import ContactsPage from "./pages/Contacts";
-import AboutCompanyPage from "./pages/AboutCompany";
-import BlogPage from "./pages/Blog";
-import BlogArticlePage from "./pages/BlogArticle";
-import FAQPage from "./pages/FAQ";
-import ServicesPage from "./pages/Services";
-import ObjectsPage from "./pages/Objects";
-import PricingPage from "./pages/Pricing";
-import ServicePageComponent from "./pages/ServicePage";
-import ObjectCategoryPage from "./pages/ObjectCategory";
-import CaseStudyPage from "./pages/CaseStudyPage";
-import GlossaryPage from "./pages/GlossaryPage";
-import GlossaryTermPage from "./pages/GlossaryTermPage";
-import CalculatorPage from "./pages/CalculatorPage";
-import MatrixLandingPage from "./pages/MatrixLandingPage";
-import NewsPage from "./pages/News";
-import VacanciesPage from "./pages/Vacancies";
-import RequisitesPage from "./pages/Requisites";
-import GuaranteePage from "./pages/Guarantee";
-import PromotionsPage from "./pages/Promotions";
-import PartnersPage from "./pages/Partners";
-import DocumentsPage from "./pages/Documents";
-import PricingServicePage from "./pages/PricingServicePage";
-import ComingSoon from "./pages/ComingSoon";
-import ThanksPage from "./pages/Thanks";
-import AppCallback from "./pages/auth/AppCallback";
-import PolitikaKonfidencialnostiPage from "./pages/PolitikaKonfidencialnosti";
-import KartaSajtaPage from "./pages/KartaSajta";
-import ServiceObjectPage, { SERVICES, OBJECT_TYPES } from "./pages/ServiceObjectPage";
 import { SERVICE_LOCATION_ROUTES } from "@shared/geoRoutes";
-import ServiceGeoPage, { getServiceKeyBySlug } from "./pages/ServiceGeoPage";
-import ContentPage from "./pages/ContentPage";
-import ContentIndexPage from "./pages/ContentIndexPage";
+import { SERVICES, OBJECT_TYPES } from "@shared/serviceObjects";
+import { getServiceKeyBySlug } from "@shared/serviceGeo";
+
+const AboutCompanyPage = lazy(() => import("./pages/AboutCompany"));
+const BlogPage = lazy(() => import("./pages/Blog"));
+const BlogArticlePage = lazy(() => import("./pages/BlogArticle"));
+const FAQPage = lazy(() => import("./pages/FAQ"));
+const ServicesPage = lazy(() => import("./pages/Services"));
+const ObjectsPage = lazy(() => import("./pages/Objects"));
+const PricingPage = lazy(() => import("./pages/Pricing"));
+const ServicePageComponent = lazy(() => import("./pages/ServicePage"));
+const ObjectCategoryPage = lazy(() => import("./pages/ObjectCategory"));
+const CaseStudyPage = lazy(() => import("./pages/CaseStudyPage"));
+const GlossaryPage = lazy(() => import("./pages/GlossaryPage"));
+const GlossaryTermPage = lazy(() => import("./pages/GlossaryTermPage"));
+const CalculatorPage = lazy(() => import("./pages/CalculatorPage"));
+const MatrixLandingPage = lazy(() => import("./pages/MatrixLandingPage"));
+const NewsPage = lazy(() => import("./pages/News"));
+const VacanciesPage = lazy(() => import("./pages/Vacancies"));
+const RequisitesPage = lazy(() => import("./pages/Requisites"));
+const GuaranteePage = lazy(() => import("./pages/Guarantee"));
+const PromotionsPage = lazy(() => import("./pages/Promotions"));
+const PartnersPage = lazy(() => import("./pages/Partners"));
+const DocumentsPage = lazy(() => import("./pages/Documents"));
+const PricingServicePage = lazy(() => import("./pages/PricingServicePage"));
+const ComingSoon = lazy(() => import("./pages/ComingSoon"));
+const ThanksPage = lazy(() => import("./pages/Thanks"));
+const PolitikaKonfidencialnostiPage = lazy(() => import("./pages/PolitikaKonfidencialnosti"));
+const KartaSajtaPage = lazy(() => import("./pages/KartaSajta"));
+const ContentPage = lazy(() => import("./pages/ContentPage"));
+const ContentIndexPage = lazy(() => import("./pages/ContentIndexPage"));
+const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
+const ServiceGeoPage = lazy(() => import("./pages/ServiceGeoPage"));
 
 function Router() {
   return (
+    <Suspense fallback={<SuspenseFallback />}>
     <Switch>
       {/* Main pages */}
       <Route path={"/"} component={Home} />
@@ -212,6 +217,7 @@ function Router() {
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 
