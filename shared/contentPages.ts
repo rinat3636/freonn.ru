@@ -24,6 +24,7 @@ import { EXTRA_CONTENT_PAGES_2 } from "./contentPagesExtra2";
 import { EXTRA_CONTENT_PAGES_3 } from "./contentPagesExtra3";
 import { EXTRA_CONTENT_PAGES_4 } from "./contentPagesExtra4";
 import { EXTRA_CONTENT_PAGES_5 } from "./contentPagesExtra5";
+import { EXTRA_CONTENT_PAGES_6 } from "./contentPagesExtra6";
 
 export const CONTENT_PAGES: ContentPage[] = [
   {
@@ -1013,6 +1014,7 @@ export const CONTENT_PAGES: ContentPage[] = [
   ...EXTRA_CONTENT_PAGES_3,
   ...EXTRA_CONTENT_PAGES_4,
   ...EXTRA_CONTENT_PAGES_5,
+  ...EXTRA_CONTENT_PAGES_6,
 ];
 
 export const CONTENT_PAGE_BY_SLUG: Record<string, ContentPage> = Object.fromEntries(
