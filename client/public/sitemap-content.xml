@@ -90,4 +90,34 @@
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
+  <url>
+    <loc>https://freonn.ru/stati/montazh-vozduhovodov</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/protivodymnaya-ventilyaciya</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/kondicionirovanie-ofisa</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/montazh-vrf-sistem</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://freonn.ru/stati/energoaudit-ventilyacii</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
 </urlset>
