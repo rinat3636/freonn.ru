@@ -116,6 +116,14 @@ async function startServer() {
     "/ceny-na-montazh-inzhenernyh-sistem": "/ceny/kompleksnaya-realizaciya",
     "/ceny-na-peskostruj": "/ceny/peskostruj",
     "/elektrosnabzhenie-i-osveshchenie": "/elektrosnabzhenie",
+    "/kontakty":     "/contacts",
+    "/himki":       "/khimki",
+    "/odincovo":    "/odintsovo",
+    "/lyubery":     "/lyubertsy",
+    "/montazh":     "/ceny/montazh",
+    "/akczii":      "/akcii",
+    "/blog/ventilyaciya-avtostoyankи": "/blog/ventilyaciya-avtostoyanka",
+    "/politika-ispolzovaniya-fajlov-cookie": "/politika-konfidencialnosti",
   };
   app.use((req, res, next) => {
     const pathname = req.path.replace(/\/$/, "") || "/";
@@ -126,6 +134,14 @@ async function startServer() {
     // Паттерны WordPress и устаревших URL
     if (/^\/(wp-content|wp-includes|wp-json|wp-admin|wp-login|shop\/|product\/)/i.test(req.path)) {
       return res.redirect(301, "/uslugi");
+    }
+    // Старые каталоги услуг /services/:service/:object → /uslugi
+    if (/^\/services\//i.test(req.path)) {
+      return res.redirect(301, "/uslugi");
+    }
+    // Старый кириллический /бренд/... → /brendy
+    if (/^\/бренд\//i.test(req.path)) {
+      return res.redirect(301, "/brendy");
     }
     // WordPress рубрики, метки, авторы, пагинация, фид
     if (/^\/(category|tag|author|page|feed)\//i.test(req.path)) {
