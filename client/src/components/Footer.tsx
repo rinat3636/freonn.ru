@@ -11,12 +11,16 @@ const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRP
 const footerLinks: Record<string, { label: string; href: string }[]> = {
   "О компании": [
     { label: "О нас", href: "/o-kompanii" },
+    { label: "Команда", href: "/team" },
+    { label: "Отзывы", href: "/otzyvy" },
     { label: "Новости", href: "/novosti" },
     { label: "Лицензии и сертификаты", href: "/sertifikaty" },
     { label: "Реквизиты", href: "/rekvizity" },
     { label: "Документы", href: "/dokumenty" },
     { label: "Вакансии", href: "/vakansii" },
     { label: "Партнёрам", href: "/partnery" },
+    { label: "Пользовательское соглашение", href: "/polzovatelskoe-soglashenie" },
+    { label: "Политика конфиденциальности", href: "/politika-konfidencialnosti" },
     { label: "Контакты", href: "/contacts" },
   ],
   "Инженерные системы": [
@@ -71,7 +75,7 @@ export default function Footer() {
               Инженерная компания Freonn — проектирование, монтаж и обслуживание инженерных систем для промышленности, бизнеса и премиум недвижимости в Москве и Московской области.
             </p>
             <div className="space-y-2.5 mb-6">
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm font-body">
+              <a href="tel:88001012009" className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm font-body">
                 <Phone size={14} className="text-[#B91C1C] flex-shrink-0" /> 8(800)101-2009
               </a>
               <a href="mailto:freonn@internet.ru" onClick={() => ymGoal("email_click")} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm font-body">

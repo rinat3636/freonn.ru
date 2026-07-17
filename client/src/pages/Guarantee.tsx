@@ -146,7 +146,7 @@ export default function GuaranteePage() {
               <p className="text-gray-500 font-body text-sm">Позвоните нам или оставьте заявку — выедем в течение 24 часов.</p>
             </div>
             <div className="flex gap-3">
-              <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="btn-dark whitespace-nowrap">8(800)101-2009</a>
+              <a href="tel:88001012009" className="btn-dark whitespace-nowrap">8(800)101-2009</a>
             </div>
           </div>
         </div>

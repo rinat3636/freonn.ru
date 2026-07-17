@@ -34,8 +34,7 @@ export interface SEOProps {
 
 export const SITE_NAME = "Freonn — Инженерная компания";
 export const SITE_URL = "https://freonn.ru";
-export const DEFAULT_OG_IMAGE =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW/og-cover_freonn.jpg";
+export const DEFAULT_OG_IMAGE = "https://freonn.ru/og-cover.jpg";
 export const LOGO_URL =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW/freonn-logo_62401a1b.png";
 
@@ -166,7 +165,7 @@ export function useSEO({
     setMeta("og:image", resolvedImage, true);
     setMeta("og:image:secure_url", resolvedImage, true);
     setMeta("og:image:width", "1200", true);
-    setMeta("og:image:height", "630", true);
+    setMeta("og:image:height", "640", true);
     setMeta("og:image:type", resolvedImage.endsWith(".png") ? "image/png" : "image/jpeg", true);
     setMeta("og:image:alt", resolvedOgTitle, true);
     setMeta("og:url", resolvedCanonical, true);

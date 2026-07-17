@@ -192,13 +192,14 @@ export const VALID_STATIC_PATHS = new Set([
   "/proektirovanie-ovik", "/montazh-ovik", "/puskonaladochnye-raboty", "/servisnoe-obsluzhivanie",
   "/ceny-na-montazh-ventilyacii", "/ceny-na-montazh-kondicionirovaniya",
   "/ceny-na-montazh-dymoudaleniya", "/ceny-na-montazh-inzhenernyh-sistem", "/ceny-na-peskostruj",
+  "/stati",
   "/promyshlennye-obekty", "/kommercheskie-obekty", "/premium-obekty",
   "/licenzii-i-sertifikaty", "/sertifikaty", "/rekvizity", "/garantii", "/garantiya",
   "/akcii", "/novosti", "/vakansii", "/dokumenty", "/partnery", "/partneram",
-  "/oplata-i-dostavka", "/sotrudniki", "/video-kejsy", "/poleznye-materialy",
+  "/oplata-i-dostavka", "/video-kejsy", "/poleznye-materialy",
   "/spasibo", "/404",
   "/auth/login", "/auth/app-callback",
-  "/politika-konfidencialnosti", "/karta-sajta",
+  "/politika-konfidencialnosti", "/karta-sajta", "/polzovatelskoe-soglashenie", "/otzyvy", "/team",
   "/slovar", "/kalkulyator-inzhenernyh-sistem",
 ]);
 
@@ -207,7 +208,6 @@ export const NOINDEX_PATHS = new Set([
   "/auth/login",
   "/auth/app-callback",
   "/oplata-i-dostavka",
-  "/sotrudniki",
   "/video-kejsy",
   "/poleznye-materialy",
 ]);

@@ -11,9 +11,10 @@ Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
 Disallow: /oplata-i-dostavka
-Disallow: /sotrudniki
 Disallow: /video-kejsy
 Disallow: /poleznye-materialy
+Disallow: /favorites
+Disallow: /favorites/
 # Закрываем несуществующие страницы
 Disallow: /about
 Disallow: /about/
@@ -46,9 +47,10 @@ Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
 Disallow: /oplata-i-dostavka
-Disallow: /sotrudniki
 Disallow: /video-kejsy
 Disallow: /poleznye-materialy
+Disallow: /favorites
+Disallow: /favorites/
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
@@ -68,6 +70,8 @@ Disallow: /wp-login.php
 Disallow: /wp-content/
 Disallow: /wp-includes/
 Disallow: /wp-json/
+# Игнорировать рекламные параметры и UTM-метки, которые создают дубли
+Clean-param: etext&ybaip&p&utm_source&utm_medium&utm_campaign&utm_content&utm_term
 Host: freonn.ru
 
 # Google
@@ -79,9 +83,10 @@ Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
 Disallow: /oplata-i-dostavka
-Disallow: /sotrudniki
 Disallow: /video-kejsy
 Disallow: /poleznye-materialy
+Disallow: /favorites
+Disallow: /favorites/
 Disallow: /about
 Disallow: /about/
 Disallow: /shop
@@ -111,9 +116,10 @@ Disallow: /admin/
 Disallow: /auth/
 Disallow: /spasibo
 Disallow: /oplata-i-dostavka
-Disallow: /sotrudniki
 Disallow: /video-kejsy
 Disallow: /poleznye-materialy
+Disallow: /favorites
+Disallow: /favorites/
 Disallow: /about
 Disallow: /about/
 Disallow: /shop

@@ -12,25 +12,20 @@ import {
   getCitySeoMeta,
   getServiceGeoSeoMeta,
   getServicePageSeoMeta,
+  getStaticSeoMeta,
   injectPageJsonLd,
   isNoIndexPath,
   resolveCanonicalPath,
   shouldOmitGeoMeta,
   stripGeoMetaTags,
 } from "../seoInjection";
+import type { PageSeoMeta as ServerSeoMeta } from "../staticSeo";
 import { isValidSpaPath, normalizePathname } from "../spaRoutes";
 
 // Polyfill for import.meta.dirname (not available in Node.js < 20.11)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SITE_URL = "https://freonn.ru";
-
-interface ServerSeoMeta {
-  title: string;
-  description: string;
-  keywords?: string;
-  robots?: string;
-}
 
 const serverSeo: Record<string, ServerSeoMeta> = {
   "/": {
@@ -147,6 +142,9 @@ function getServerSeo(pathname: string, status: number): ServerSeoMeta | null {
   const cityMeta = getCitySeoMeta(clean.slice(1));
   if (cityMeta) return cityMeta;
 
+  const staticMeta = getStaticSeoMeta(pathname);
+  if (staticMeta) return staticMeta;
+
   const service = SERVICE_SEO[clean.slice(1) as keyof typeof SERVICE_SEO];
   if (service) {
     return {
@@ -180,6 +178,8 @@ function injectServerSeo(html: string, pathname: string, status: number) {
   const jsonLd = status === 200 ? buildPageJsonLd(pathname) : null;
   if (jsonLd) {
     next = injectPageJsonLd(next, jsonLd);
+  } else if (status === 200) {
+    next = injectPageJsonLd(next, []);
   }
 
   const seo = getServerSeo(pathname, status);
@@ -214,6 +214,23 @@ function injectServerSeo(html: string, pathname: string, status: number) {
     .replace(/<link rel="canonical" href="[^"]*" data-seo-id="canonical" \/>/, `<link rel="canonical" href="${canonical}" data-seo-id="canonical" />`)
     .replace(/<link rel="alternate" hreflang="ru" href="[^"]*" \/>/, `<link rel="alternate" hreflang="ru" href="${canonical}" />`)
     .replace(/<link rel="alternate" hreflang="x-default" href="[^"]*" \/>/, `<link rel="alternate" hreflang="x-default" href="${canonical}" />`);
+
+  if (seo.ogType) {
+    next = next.replace(
+      /<meta property="og:type" content="[^"]*" \/>/,
+      `<meta property="og:type" content="${seo.ogType}" />`
+    );
+  }
+
+  if (seo.article) {
+    const a = seo.article;
+    const articleTags = `
+<meta property="article:published_time" content="${escapeHtml(a.publishedTime)}" />
+<meta property="article:modified_time" content="${escapeHtml(a.modifiedTime)}" />
+<meta property="article:section" content="${escapeHtml(a.section)}" />
+<meta property="article:author" content="${escapeHtml(a.author)}" />`;
+    next = next.replace(/<meta property="og:type" content="[^"]*" \/>/, (m) => `${m}${articleTags}`);
+  }
 
   if (keywords) {
     next = next.replace(/<meta name="keywords" content="[^"]*" \/>/, `<meta name="keywords" content="${keywords}" />`);

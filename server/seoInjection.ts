@@ -29,8 +29,10 @@ import {
   resolveServiceSlugFromPath,
   SERVICE_OBJECT_STATIC_FAQ,
 } from "../shared/serviceFaq";
+import { getStaticPageJsonLd, getStaticSeoMeta } from "./staticSeo";
 
 export { shouldOmitGeoMeta, NOINDEX_PATHS } from "../shared/geoRoutes";
+export { getStaticSeoMeta };
 
 export function isNoIndexPath(pathname: string): boolean {
   const clean = normalizePathname(pathname);
@@ -287,6 +289,9 @@ export function buildPageJsonLd(pathname: string): object[] | null {
     }
   }
 
+  const staticLd = getStaticPageJsonLd(pathname);
+  if (staticLd) return staticLd;
+
   return null;
 }
 
@@ -306,8 +311,48 @@ export function stripGeoMetaTags(html: string): string {
   return next;
 }
 
+const GLOBAL_JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://freonn.ru/#organization",
+    name: "Freonn",
+    alternateName: "ООО «ЭКС»",
+    url: "https://freonn.ru",
+    logo: "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW/freonn-logo_62401a1b.png",
+    telephone: "+78001012009",
+    email: "freonn@internet.ru",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "ул. Ленина, д. 2Б",
+      addressLocality: "Дзержинский",
+      addressRegion: "Московская область",
+      addressCountry: "RU",
+    },
+    sameAs: [
+      "https://github.com/rinat3636/freonn.ru",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://freonn.ru/#website",
+    name: "Freonn — Инженерная компания",
+    url: "https://freonn.ru",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://freonn.ru/?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  },
+];
+
 export function injectPageJsonLd(html: string, schemas: object[]): string {
-  const script = `<script type="application/ld+json" data-seo-id="page-jsonld">${JSON.stringify(schemas.length === 1 ? schemas[0] : schemas)}</script>`;
+  const merged = [...GLOBAL_JSON_LD, ...schemas];
+  const script = `<script type="application/ld+json" data-seo-id="page-jsonld">${JSON.stringify(merged)}</script>`;
   return html.replace("</head>", `    ${script}\n  </head>`);
 }
 

@@ -264,7 +264,7 @@ export default function PricingServicePage({ service }: PricingServicePageProps)
   const data = pricingData[service] || pricingData["kompleks"];
 
   useSEO({
-    title: `Цены на ${data.title.toLowerCase()} — Freonn`,
+    title: `${data.title} — Freonn`,
     description: data.description.slice(0, 160),
     keywords: `цены ${data.title.toLowerCase()}, стоимость монтажа, прайс-лист, Freonn`,
     canonical: `/ceny/${service}`,
@@ -276,7 +276,7 @@ export default function PricingServicePage({ service }: PricingServicePageProps)
       "@context": "https://schema.org",
       "@type": "WebPage",
       "@id": `https://freonn.ru/ceny/${service}#webpage`,
-      name: `Цены на ${data.title.toLowerCase()} — Freonn`,
+      name: `${data.title} — Freonn`,
       description: data.description.slice(0, 160),
       url: `https://freonn.ru/ceny/${service}`,
       isPartOf: { "@id": "https://freonn.ru/#website" },
@@ -347,7 +347,7 @@ export default function PricingServicePage({ service }: PricingServicePageProps)
                 <a href="/contacts" className="btn-dark inline-flex items-center gap-2 justify-center">
                   Получить точный расчёт <ArrowRight size={14} />
                 </a>
-                <a href="tel:88001012009" onClick={() => ymGoal("phone_click")} className="btn-dark inline-flex items-center gap-2 justify-center">
+                <a href="tel:88001012009" className="btn-dark inline-flex items-center gap-2 justify-center">
                   <Phone size={14} /> 8(800)101-2009
                 </a>
               </div>

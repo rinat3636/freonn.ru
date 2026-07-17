@@ -206,5 +206,12 @@ export function getBlogArticleSeoMeta(slug: string) {
     title: `${article.title} — Freonn`,
     description: article.description,
     keywords: `${article.category.toLowerCase()}, инженерные системы, Freonn, монтаж вентиляции`,
+    ogType: "article" as const,
+    article: {
+      publishedTime: article.published,
+      modifiedTime: article.published,
+      section: article.category,
+      author: "Freonn",
+    },
   };
 }

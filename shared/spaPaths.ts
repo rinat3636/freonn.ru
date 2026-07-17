@@ -2,6 +2,7 @@
  * Валидация SPA-путей для сервера (404). Зависит от geoRoutes и seoMatrix — без циклического импорта.
  */
 import { CASE_STUDY_BY_SLUG } from "./caseStudies";
+import { CONTENT_PAGE_BY_SLUG } from "./contentPages";
 import { GLOSSARY_BY_SLUG } from "./glossaryTerms";
 import {
   BLOG_SLUGS,
@@ -38,6 +39,11 @@ export function isValidSpaPath(pathname: string): boolean {
   if (clean.startsWith("/slovar/")) {
     return GLOSSARY_BY_SLUG[clean.slice("/slovar/".length)] !== undefined;
   }
+
+  if (clean.startsWith("/stati/")) {
+    return CONTENT_PAGE_BY_SLUG[clean.slice("/stati/".length)] !== undefined;
+  }
+  if (clean === "/stati") return true;
 
   const segments = clean.split("/").filter(Boolean);
   if (segments.length !== 1) return false;
