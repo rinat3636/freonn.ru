@@ -20,6 +20,7 @@ export interface ContentPage {
 }
 
 import { EXTRA_CONTENT_PAGES } from "./contentPagesExtra";
+import { EXTRA_CONTENT_PAGES_2 } from "./contentPagesExtra2";
 
 export const CONTENT_PAGES: ContentPage[] = [
   {
@@ -1005,6 +1006,7 @@ export const CONTENT_PAGES: ContentPage[] = [
     ],
   },
   ...EXTRA_CONTENT_PAGES,
+  ...EXTRA_CONTENT_PAGES_2,
 ];
 
 export const CONTENT_PAGE_BY_SLUG: Record<string, ContentPage> = Object.fromEntries(
