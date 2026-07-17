@@ -107,13 +107,9 @@ export default function HeroSection() {
       <div className="container relative z-10 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
         <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 xl:gap-16 items-center">
 
-          {/* Left: headline */}
+          {/* Left: headline — статичная отрисовка, чтобы не задерживать LCP анимацией */}
           <div className="lg:col-span-3">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
+            <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-0.5 w-10 bg-[#B91C1C]" />
                 <span className="text-[#B91C1C] font-heading font-semibold uppercase text-xs sm:text-sm tracking-widest">
@@ -162,7 +158,7 @@ export default function HeroSection() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Right: quick links — hidden on mobile, shown from lg */}
