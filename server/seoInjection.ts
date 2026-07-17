@@ -330,7 +330,10 @@ const GLOBAL_JSON_LD = [
       addressCountry: "RU",
     },
     sameAs: [
+      "https://freonn.ru",
       "https://github.com/rinat3636/freonn.ru",
+      "https://yandex.ru/maps/org/freonn/70507617267/",
+      "https://2gis.ru/dzerzhinskij/firm/70000001113849295",
     ],
   },
   {
