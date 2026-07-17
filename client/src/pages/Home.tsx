@@ -5,20 +5,9 @@
 import { useSEO } from "@/hooks/useSEO";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import ServicesSection from "@/components/ServicesSection";
-import AboutSection from "@/components/AboutSection";
-import ObjectsSection from "@/components/ObjectsSection";
-import ProcessSection from "@/components/ProcessSection";
-import PricingSection from "@/components/PricingSection";
-import ProjectsSection from "@/components/ProjectsSection";
-import AdvantagesSection from "@/components/AdvantagesSection";
-import PartnersSection from "@/components/PartnersSection";
-import BlogSection from "@/components/BlogSection";
-import FAQSection from "@/components/FAQSection";
-import ContactSection from "@/components/ContactSection";
-import Footer from "@/components/Footer";
-import HomeGeoSection from "@/components/HomeGeoSection";
-import FloatingButtons from "@/components/FloatingButtons";
+import { lazy, Suspense } from "react";
+
+const HomeBelowFold = lazy(() => import("./HomeBelowFold"));
 
 export default function Home() {
   useSEO({
@@ -46,21 +35,14 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <HeroSection />
-        <ServicesSection />
-        <AboutSection />
-        <ObjectsSection />
-        <ProcessSection />
-        <PricingSection />
-        <ProjectsSection />
-        <AdvantagesSection />
-        <PartnersSection />
-        <BlogSection />
-        <FAQSection />
-        <HomeGeoSection />
-        <ContactSection />
+        <Suspense
+          fallback={
+            <div className="min-h-[800px] bg-[#F7F8FF] animate-pulse" aria-hidden="true" />
+          }
+        >
+          <HomeBelowFold />
+        </Suspense>
       </main>
-      <Footer />
-      <FloatingButtons />
     </div>
   );
 }
