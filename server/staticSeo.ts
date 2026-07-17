@@ -1,4 +1,5 @@
 import { CASE_STUDY_BY_SLUG } from "../shared/caseStudies";
+import { CONTENT_PAGE_BY_SLUG } from "../shared/contentPages";
 import { GLOSSARY_BY_SLUG } from "../shared/glossaryTerms";
 
 export interface PageSeoMeta {
@@ -139,6 +140,13 @@ const STATIC_PAGE_SEO: Record<string, PageSeoMeta> = {
     keywords:
       "калькулятор стоимости монтажа, расчёт вентиляции, стоимость инженерных систем",
   },
+  "/stati": {
+    title: "Полезные статьи — гайды и сравнения по инженерным системам — Freonn",
+    description:
+      "Экспертные статьи, сравнения и гайды по вентиляции, кондиционированию, дымоудалению и отоплению. Практические рекомендации инженеров Freonn.",
+    keywords:
+      "статьи вентиляция, гид кондиционирование, сравнение систем дымоудаления, инженерные системы",
+  },
 };
 
 const OBJECT_CATEGORY_SEO: Record<string, PageSeoMeta> = {
@@ -249,6 +257,25 @@ export function getStaticSeoMeta(pathname: string): PageSeoMeta | null {
     }
   }
 
+  if (clean.startsWith("/stati/")) {
+    const slug = clean.slice("/stati/".length);
+    const page = CONTENT_PAGE_BY_SLUG[slug];
+    if (page) {
+      return {
+        title: page.title,
+        description: page.description,
+        keywords: page.keywords,
+        ogType: "article",
+        article: {
+          publishedTime: page.published,
+          modifiedTime: page.modified,
+          section: page.category,
+          author: page.author,
+        },
+      };
+    }
+  }
+
   return null;
 }
 
@@ -349,6 +376,41 @@ export function getStaticPageJsonLd(pathname: string): object[] | null {
           isPartOf: { "@id": "https://freonn.ru/#website" },
         },
       ];
+    }
+  }
+
+  if (clean.startsWith("/stati/")) {
+    const slug = clean.slice("/stati/".length);
+    const page = CONTENT_PAGE_BY_SLUG[slug];
+    if (page) {
+      const graph: object[] = [
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "@id": `${url}#article`,
+          headline: page.h1,
+          description: page.description,
+          url,
+          datePublished: page.published,
+          dateModified: page.modified,
+          author: { "@type": "Organization", name: page.author },
+          publisher: { "@id": "https://freonn.ru/#organization" },
+          isPartOf: { "@id": "https://freonn.ru/#website" },
+          articleSection: page.category,
+        },
+      ];
+      if (page.faq && page.faq.length > 0) {
+        graph.push({
+          "@type": "FAQPage",
+          "@id": `${url}#faq`,
+          mainEntity: page.faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        });
+      }
+      return graph;
     }
   }
 

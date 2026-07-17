@@ -192,6 +192,7 @@ export const VALID_STATIC_PATHS = new Set([
   "/proektirovanie-ovik", "/montazh-ovik", "/puskonaladochnye-raboty", "/servisnoe-obsluzhivanie",
   "/ceny-na-montazh-ventilyacii", "/ceny-na-montazh-kondicionirovaniya",
   "/ceny-na-montazh-dymoudaleniya", "/ceny-na-montazh-inzhenernyh-sistem", "/ceny-na-peskostruj",
+  "/stati",
   "/promyshlennye-obekty", "/kommercheskie-obekty", "/premium-obekty",
   "/licenzii-i-sertifikaty", "/sertifikaty", "/rekvizity", "/garantii", "/garantiya",
   "/akcii", "/novosti", "/vakansii", "/dokumenty", "/partnery", "/partneram",

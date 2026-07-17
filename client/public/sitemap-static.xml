@@ -151,6 +151,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://freonn.ru/stati</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://freonn.ru/promyshlennye-obekty</loc>
     <lastmod>2026-07-17</lastmod>
     <changefreq>monthly</changefreq>

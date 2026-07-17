@@ -40,6 +40,8 @@ import KartaSajtaPage from "./pages/KartaSajta";
 import ServiceObjectPage, { SERVICES, OBJECT_TYPES } from "./pages/ServiceObjectPage";
 import { SERVICE_LOCATION_ROUTES } from "@shared/geoRoutes";
 import ServiceGeoPage, { getServiceKeyBySlug } from "./pages/ServiceGeoPage";
+import ContentPage from "./pages/ContentPage";
+import ContentIndexPage from "./pages/ContentIndexPage";
 
 function Router() {
   return (
@@ -171,6 +173,10 @@ function Router() {
       <Route path={"/kejs/:slug"}>
         {(params) => <CaseStudyPage slug={params.slug || ""} />}
       </Route>
+
+      {/* SEO content pages (guides, comparisons, how-to) */}
+      <Route path={"/stati"} component={ContentIndexPage} />
+      <Route path={"/stati/:slug"} component={ContentPage} />
 
       {/* Service × Object matrix landing pages */}
       {Object.keys(SERVICES).flatMap(svc =>

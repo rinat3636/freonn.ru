@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { CASE_STUDIES } from "../shared/caseStudies";
+import { CONTENT_PAGES } from "../shared/contentPages";
 import { GLOSSARY_TERMS } from "../shared/glossaryTerms";
 import { getCityTier, TIER0_SLUGS } from "../shared/geoTiers";
 import {
@@ -155,6 +156,8 @@ const blogUrls = getBlogSlugs()
   .filter((s) => includeInSitemap(`/blog/${s}`))
   .map((s) => entry(`/blog/${s}`, "0.65", "monthly"));
 
+const contentPageUrls = CONTENT_PAGES.map((p) => entry(`/stati/${p.slug}`, "0.72", "monthly"));
+
 const pricingUrls = getPricingSlugs()
   .filter((s) => includeInSitemap(`/ceny/${s}`))
   .map((s) => entry(`/ceny/${s}`, "0.7", "monthly"));
@@ -182,6 +185,7 @@ const groups: { file: string; urls: UrlEntry[] }[] = [
   { file: "sitemap-aliases.xml", urls: aliasUrls },
   { file: "sitemap-prices.xml", urls: [...priceCityUrls, ...pricingUrls] },
   { file: "sitemap-blog.xml", urls: blogUrls },
+  { file: "sitemap-content.xml", urls: contentPageUrls },
 ];
 
 // Deduplicate URLs across sitemaps; first group wins (highest priority first)

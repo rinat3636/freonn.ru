@@ -36,4 +36,8 @@
     <loc>https://freonn.ru/sitemap-blog.xml</loc>
     <lastmod>2026-07-17</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>https://freonn.ru/sitemap-content.xml</loc>
+    <lastmod>2026-07-17</lastmod>
+  </sitemap>
 </sitemapindex>
