@@ -6,7 +6,6 @@
  */
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { AnimatePresence, motion } from "framer-motion";
 import { Phone, ChevronDown, Menu, X } from "lucide-react";
 import UnifiedAccountBanner from "@/components/freonn-group/UnifiedAccountBanner";
 import { AuthNavActions } from "@/components/freonn-group/AuthNavActions";
@@ -291,111 +290,100 @@ export default function Header() {
       </div>
 
       {/* Mobile menu — full screen overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.25 }}
-            className="fixed inset-0 top-0 bg-[#0F1340] text-white z-[100] overflow-y-auto"
-          >
-            {/* Mobile menu header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <img src={LOGO_URL} alt="Freonn" className="h-9 w-auto brightness-0 invert" loading="lazy" decoding="async" width="160" height="36" />
-              <button onClick={() => setMobileOpen(false)} className="p-2 text-white/80 hover:text-white">
-                <X size={24} />
-              </button>
-            </div>
-            {/* Contact info */}
-            <div className="px-4 py-4 bg-[#B91C1C]/10 border-b border-white/10">
-              <a href="tel:88001012009" className="flex items-center gap-2 text-white font-heading font-semibold text-lg mb-1">
-                <Phone size={18} className="text-[#B91C1C]" /> 8(800)101-2009
-              </a>
-              <p className="text-white/50 text-xs font-body">Бесплатно по России · Пн-Сб 9:00–19:00</p>
-            </div>
-            {/* Nav links */}
-            <div className="flex flex-col">
-              {navItems.map(item => (
-                <div key={item.label}>
-                  {item.children ? (
-                    <>
-                      <button
-                        onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                        className="w-full flex items-center justify-between py-4 px-4 border-b border-white/10 font-heading font-medium uppercase text-sm tracking-wide hover:text-[#B91C1C] transition-colors"
+      <div
+        className={`fixed inset-0 top-0 bg-[#0F1340] text-white z-[100] overflow-y-auto transform transition-transform duration-300 ease-out ${
+          mobileOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+        }`}
+      >
+        {/* Mobile menu header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <img src={LOGO_URL} alt="Freonn" className="h-9 w-auto brightness-0 invert" loading="eager" decoding="async" width="160" height="36" />
+          <button onClick={() => setMobileOpen(false)} className="p-2 text-white/80 hover:text-white">
+            <X size={24} />
+          </button>
+        </div>
+        {/* Contact info */}
+        <div className="px-4 py-4 bg-[#B91C1C]/10 border-b border-white/10">
+          <a href="tel:88001012009" className="flex items-center gap-2 text-white font-heading font-semibold text-lg mb-1">
+            <Phone size={18} className="text-[#B91C1C]" /> 8(800)101-2009
+          </a>
+          <p className="text-white/50 text-xs font-body">Бесплатно по России · Пн-Сб 9:00–19:00</p>
+        </div>
+        {/* Nav links */}
+        <div className="flex flex-col">
+          {navItems.map(item => (
+            <div key={item.label}>
+              {item.children ? (
+                <>
+                  <button
+                    onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                    className="w-full flex items-center justify-between py-4 px-4 border-b border-white/10 font-heading font-medium uppercase text-sm tracking-wide hover:text-[#B91C1C] transition-colors"
+                  >
+                    {item.label}
+                    <ChevronDown size={16} className={`transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  <div
+                    className={`overflow-hidden bg-[#1a2060] transition-[max-height] duration-300 ease-out ${
+                      mobileServicesOpen ? "max-h-[500px]" : "max-h-0"
+                    }`}
+                  >
+                    {item.children.map(child => (
+                      <a
+                        key={child.label}
+                        href={child.href}
+                        onClick={() => { setMobileOpen(false); ymGoal("nav_child_click", { label: child.label }); }}
+                        className="block py-3 px-8 text-sm text-white/70 hover:text-[#B91C1C] border-b border-white/5 font-body transition-colors"
                       >
-                        {item.label}
-                        <ChevronDown size={16} className={`transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`} />
-                      </button>
-                      <AnimatePresence>
-                        {mobileServicesOpen && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: "auto" }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden bg-[#1a2060]"
-                          >
-                            {item.children.map(child => (
-                              <a
-                                key={child.label}
-                                href={child.href}
-                                onClick={() => { setMobileOpen(false); ymGoal("nav_child_click", { label: child.label }); }}
-                                className="block py-3 px-8 text-sm text-white/70 hover:text-[#B91C1C] border-b border-white/5 font-body transition-colors"
-                              >
-                                {child.label}
-                              </a>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </>
-                  ) : (
-                    <a
-                      href={item.href}
-                      onClick={() => { setMobileOpen(false); ymGoal("nav_click", { label: item.label }); }}
-                      className="block py-4 px-4 border-b border-white/10 font-heading font-medium uppercase text-sm tracking-wide hover:text-[#B91C1C] transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-            {showFreonnAuth ? (
-              <div className="px-4 pt-4">
-                <AuthNavActions variant="stack" onNavigate={() => setMobileOpen(false)} />
-              </div>
-            ) : null}
-
-            {/* Bottom CTA */}
-            <div className="p-4 mt-2 flex flex-col gap-3">
-              <a href="/contacts" onClick={() => { setMobileOpen(false); ymGoal("mobile_engineer_click"); }} className="btn-primary text-center text-base py-3">
-                Вызвать инженера
-              </a>
-              <a href="/contacts" onClick={() => { setMobileOpen(false); ymGoal("mobile_tender_click"); }} className="btn-outline text-center text-base py-3 border-white text-white rounded-full">
-                Пригласить в тендер
-              </a>
-              <a
-                href="https://max.ru/id3604084591_biz"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => { setMobileOpen(false); ymGoal("mobile_works_click"); }}
-                className="btn-outline text-center text-base py-3"
-              >
-                Наши работы
-              </a>
-            </div>
-            {/* Footer links in mobile menu */}
-            <div className="px-4 pb-6 flex flex-wrap gap-3">
-              {topBarLinks.map(link => (
-                <a key={link.href} href={link.href} className="text-white/40 text-xs font-body hover:text-white/70 transition-colors">
-                  {link.label}
+                        {child.label}
+                      </a>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <a
+                  href={item.href}
+                  onClick={() => { setMobileOpen(false); ymGoal("nav_click", { label: item.label }); }}
+                  className="block py-4 px-4 border-b border-white/10 font-heading font-medium uppercase text-sm tracking-wide hover:text-[#B91C1C] transition-colors"
+                >
+                  {item.label}
                 </a>
-              ))}
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ))}
+        </div>
+        {showFreonnAuth ? (
+          <div className="px-4 pt-4">
+            <AuthNavActions variant="stack" onNavigate={() => setMobileOpen(false)} />
+          </div>
+        ) : null}
+
+        {/* Bottom CTA */}
+        <div className="p-4 mt-2 flex flex-col gap-3">
+          <a href="/contacts" onClick={() => { setMobileOpen(false); ymGoal("mobile_engineer_click"); }} className="btn-primary text-center text-base py-3">
+            Вызвать инженера
+          </a>
+          <a href="/contacts" onClick={() => { setMobileOpen(false); ymGoal("mobile_tender_click"); }} className="btn-outline text-center text-base py-3 border-white text-white rounded-full">
+            Пригласить в тендер
+          </a>
+          <a
+            href="https://max.ru/id3604084591_biz"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => { setMobileOpen(false); ymGoal("mobile_works_click"); }}
+            className="btn-outline text-center text-base py-3"
+          >
+            Наши работы
+          </a>
+        </div>
+        {/* Footer links in mobile menu */}
+        <div className="px-4 pb-6 flex flex-wrap gap-3">
+          {topBarLinks.map(link => (
+            <a key={link.href} href={link.href} className="text-white/40 text-xs font-body hover:text-white/70 transition-colors">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </header>
     </>
   );

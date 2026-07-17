@@ -5,14 +5,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch, Redirect } from "wouter";
 import PreloaderScreen from "./components/PreloaderScreen";
 import SuspenseFallback from "./components/SuspenseFallback";
-import NotFound from "@/pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FreonnAuthProvider } from "./contexts/FreonnAuthContext";
 import UnifiedLoginPage from "./components/freonn-group/UnifiedLoginPage";
 import AppCallback from "./pages/auth/AppCallback";
 import Home from "./pages/Home";
-import ContactsPage from "./pages/Contacts";
 import { SERVICE_LOCATION_ROUTES } from "@shared/geoRoutes";
 import { SERVICES, OBJECT_TYPES } from "@shared/serviceObjects";
 import { getServiceKeyBySlug } from "@shared/serviceGeo";
@@ -50,6 +48,8 @@ const ContentPage = lazy(() => import("./pages/ContentPage"));
 const ContentIndexPage = lazy(() => import("./pages/ContentIndexPage"));
 const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
 const ServiceGeoPage = lazy(() => import("./pages/ServiceGeoPage"));
+const ContactsPage = lazy(() => import("./pages/Contacts"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 function Router() {
   return (
