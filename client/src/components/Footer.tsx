@@ -11,12 +11,15 @@ const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRP
 const footerLinks: Record<string, { label: string; href: string }[]> = {
   "О компании": [
     { label: "О нас", href: "/o-kompanii" },
+    { label: "Отзывы", href: "/otzyvy" },
     { label: "Новости", href: "/novosti" },
     { label: "Лицензии и сертификаты", href: "/sertifikaty" },
     { label: "Реквизиты", href: "/rekvizity" },
     { label: "Документы", href: "/dokumenty" },
     { label: "Вакансии", href: "/vakansii" },
     { label: "Партнёрам", href: "/partnery" },
+    { label: "Пользовательское соглашение", href: "/polzovatelskoe-soglashenie" },
+    { label: "Политика конфиденциальности", href: "/politika-konfidencialnosti" },
     { label: "Контакты", href: "/contacts" },
   ],
   "Инженерные системы": [

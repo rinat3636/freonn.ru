@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch, Redirect } from "wouter";
 import PreloaderScreen from "./components/PreloaderScreen";
@@ -43,6 +44,7 @@ const ThanksPage = lazy(() => import("./pages/Thanks"));
 const PolitikaKonfidencialnostiPage = lazy(() => import("./pages/PolitikaKonfidencialnosti"));
 const KartaSajtaPage = lazy(() => import("./pages/KartaSajta"));
 const TermsOfServicePage = lazy(() => import("./pages/TermsOfService"));
+const ReviewsPage = lazy(() => import("./pages/ReviewsPage"));
 const ContentPage = lazy(() => import("./pages/ContentPage"));
 const ContentIndexPage = lazy(() => import("./pages/ContentIndexPage"));
 const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
@@ -172,6 +174,7 @@ function Router() {
       <Route path={"/politika-konfidencialnosti"} component={PolitikaKonfidencialnostiPage} />
       <Route path={"/karta-sajta"} component={KartaSajtaPage} />
       <Route path={"/polzovatelskoe-soglashenie"} component={TermsOfServicePage} />
+      <Route path={"/otzyvy"} component={ReviewsPage} />
       <Route path={"/slovar"} component={GlossaryPage} />
       <Route path={"/slovar/:slug"}>
         {(params) => <GlossaryTermPage slug={params.slug || ""} />}
@@ -225,6 +228,7 @@ function Router() {
 
 function App() {
   const [preloaderDone, setPreloaderDone] = useState(false);
+  useAnalytics();
 
   return (
     <ErrorBoundary>

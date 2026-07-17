@@ -199,7 +199,7 @@ export const VALID_STATIC_PATHS = new Set([
   "/oplata-i-dostavka", "/sotrudniki", "/video-kejsy", "/poleznye-materialy",
   "/spasibo", "/404",
   "/auth/login", "/auth/app-callback",
-  "/politika-konfidencialnosti", "/karta-sajta", "/polzovatelskoe-soglashenie",
+  "/politika-konfidencialnosti", "/karta-sajta", "/polzovatelskoe-soglashenie", "/otzyvy",
   "/slovar", "/kalkulyator-inzhenernyh-sistem",
 ]);
 
