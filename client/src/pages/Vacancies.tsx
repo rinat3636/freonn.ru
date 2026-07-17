@@ -7,104 +7,7 @@ import ContactSection from "@/components/ContactSection";
 import { motion } from "framer-motion";
 import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle } from "lucide-react";
 import { ymGoal } from "@/lib/ym";
-
-const vacancies = [
-  {
-    title: "Инженер-проектировщик ОВиК",
-    department: "Проектирование",
-    type: "Полная занятость",
-    location: "Москва / Удалённо",
-    salary: "от 120 000 ₽",
-    requirements: [
-      "Высшее техническое образование (ТГВ, ОВиК)",
-      "Опыт проектирования от 3 лет",
-      "Знание AutoCAD, Revit, MagiCAD",
-      "Знание СП 60.13330, ГОСТ, СНиП",
-    ],
-    duties: [
-      "Разработка проектной документации разделов ОВ, ВК",
-      "Расчёт систем вентиляции и кондиционирования",
-      "Согласование проектов с заказчиком",
-      "Авторский надзор за монтажом",
-    ],
-  },
-  {
-    title: "Монтажник систем вентиляции и кондиционирования",
-    department: "Монтаж",
-    type: "Полная занятость",
-    location: "Москва и МО",
-    salary: "от 80 000 ₽",
-    requirements: [
-      "Опыт монтажа вентиляции от 2 лет",
-      "Умение читать проектную документацию",
-      "Допуск к работам на высоте",
-      "Наличие инструмента приветствуется",
-    ],
-    duties: [
-      "Монтаж воздуховодов и вентиляционного оборудования",
-      "Установка приточно-вытяжных установок",
-      "Монтаж систем кондиционирования",
-      "Участие в пусконаладочных работах",
-    ],
-  },
-  {
-    title: "Монтажник систем дымоудаления",
-    department: "Монтаж",
-    type: "Полная занятость",
-    location: "Москва и МО",
-    salary: "от 90 000 ₽",
-    requirements: [
-      "Опыт монтажа дымоудаления от 2 лет",
-      "Знание требований СП 7.13130",
-      "Допуск к работам на высоте",
-      "Готовность к командировкам",
-    ],
-    duties: [
-      "Монтаж систем дымоудаления и противодымной вентиляции",
-      "Установка клапанов и огнезадерживающих клапанов",
-      "Прокладка кабелей управления",
-      "Участие в сдаче объектов пожарному надзору",
-    ],
-  },
-  {
-    title: "Менеджер по продажам инженерных систем",
-    department: "Продажи",
-    type: "Полная занятость",
-    location: "Москва",
-    salary: "от 70 000 ₽ + %",
-    requirements: [
-      "Опыт продаж B2B от 2 лет",
-      "Понимание инженерных систем (желательно)",
-      "Навыки работы с CRM",
-      "Коммуникабельность и настойчивость",
-    ],
-    duties: [
-      "Поиск и привлечение новых клиентов",
-      "Ведение переговоров и заключение договоров",
-      "Подготовка коммерческих предложений",
-      "Сопровождение сделок до подписания актов",
-    ],
-  },
-  {
-    title: "Руководитель монтажного участка",
-    department: "Монтаж",
-    type: "Полная занятость",
-    location: "Москва и МО",
-    salary: "от 150 000 ₽",
-    requirements: [
-      "Высшее техническое образование",
-      "Опыт руководства монтажными бригадами от 5 лет",
-      "Знание нормативной базы по ОВиК",
-      "Опыт сдачи объектов надзорным органам",
-    ],
-    duties: [
-      "Организация и контроль монтажных работ",
-      "Управление бригадами монтажников",
-      "Контроль качества и сроков выполнения работ",
-      "Взаимодействие с заказчиком и проектировщиками",
-    ],
-  },
-];
+import { vacancies, buildJobPostingsJsonLd } from "@shared/vacancies";
 
 const benefits = [
   "Официальное трудоустройство по ТК РФ",
@@ -115,44 +18,6 @@ const benefits = [
   "Дружный коллектив профессионалов",
 ];
 
-const parseSalaryMin = (salary: string): number => {
-  const digits = salary.replace(/[^\d]/g, "");
-  return digits ? Number(digits) : 0;
-};
-
-const jobPostings = vacancies.map((v, i) => ({
-  "@context": "https://schema.org",
-  "@type": "JobPosting" as const,
-  "@id": `https://freonn.ru/vakansii#jobposting-${i}`,
-  title: v.title,
-  description: `${v.title}. ${v.duties.join(" ")}`,
-  url: "https://freonn.ru/vakansii",
-  hiringOrganization: { "@id": "https://freonn.ru/#organization" },
-  jobLocation: {
-    "@type": "Place",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "ул. Ленина, д. 2Б",
-      addressLocality: "Дзержинский",
-      addressRegion: "Московская обл.",
-      postalCode: "143500",
-      addressCountry: "RU",
-    },
-  },
-  employmentType: "FULL_TIME",
-  datePosted: "2026-07-17",
-  validThrough: "2026-12-31",
-  baseSalary: {
-    "@type": "MonetaryAmount",
-    currency: "RUB",
-    value: {
-      "@type": "QuantitativeValue",
-      minValue: parseSalaryMin(v.salary),
-      unitText: "MONTH",
-    },
-  },
-}));
-
 export default function VacanciesPage() {
 
   useSEO({
@@ -161,7 +26,7 @@ export default function VacanciesPage() {
     keywords: "вакансии монтажник вентиляции, работа инженер Москва, вакансии инженерная компания",
     canonical: "/vakansii",
     breadcrumbs: [{ name: "Вакансии", url: "/vakansii" }],
-    jsonLd: jobPostings,
+    jsonLd: buildJobPostingsJsonLd("https://freonn.ru/vakansii"),
   });
   return (
     <PageLayout

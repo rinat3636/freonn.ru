@@ -1,6 +1,7 @@
 import { CASE_STUDY_BY_SLUG } from "../shared/caseStudies";
 import { CONTENT_PAGE_BY_SLUG } from "../shared/contentPages";
 import { GLOSSARY_BY_SLUG } from "../shared/glossaryTerms";
+import { buildJobPostingsJsonLd } from "../shared/vacancies";
 
 export interface PageSeoMeta {
   title: string;
@@ -314,6 +315,10 @@ export function getStaticSeoMeta(pathname: string): PageSeoMeta | null {
 export function getStaticPageJsonLd(pathname: string): object[] | null {
   const clean = pathname.replace(/\/+$/, "") || "/";
   const url = `https://freonn.ru${clean}`;
+
+  if (clean === "/vakansii") {
+    return buildJobPostingsJsonLd(url);
+  }
 
   if (STATIC_PAGE_SEO[clean]) {
     const page = STATIC_PAGE_SEO[clean];
