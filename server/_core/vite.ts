@@ -324,7 +324,7 @@ export function serveStatic(app: Express) {
   app.use(
     "/assets",
     express.static(path.resolve(distPath, "assets"), {
-      maxAge: "1y",
+      maxAge: 365 * 24 * 60 * 60 * 1000,
       immutable: true,
       index: false,
     })
@@ -334,7 +334,7 @@ export function serveStatic(app: Express) {
   // Cache for 1 day; sitemaps/robots are rebuilt on each deploy, but clients revalidate quickly.
   app.use(
     express.static(distPath, {
-      maxAge: "1d",
+      maxAge: 24 * 60 * 60 * 1000,
       index: false,
     })
   );
