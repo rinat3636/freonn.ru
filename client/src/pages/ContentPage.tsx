@@ -30,6 +30,11 @@ const RELATED_LINKS: Record<string, { label: string; href: string }[]> = {
     { label: "Цены на электроснабжение", href: "/ceny/elektrosnabzhenie" },
     { label: "Контакты", href: "/contacts" },
   ],
+  "Холодоснабжение": [
+    { label: "Монтаж холодоснабжения", href: "/holodosnabzhenie" },
+    { label: "Цены на холодоснабжение", href: "/ceny/holodosnabzhenie" },
+    { label: "Вопросы и ответы", href: "/faq" },
+  ],
   "Водоснабжение": [
     { label: "Монтаж водоснабжения", href: "/vodosnabzhenie" },
     { label: "Цены на водоснабжение", href: "/ceny/vodosnabzhenie" },
