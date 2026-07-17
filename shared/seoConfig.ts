@@ -26,6 +26,7 @@ export const CANONICAL_REDIRECTS: Record<string, string> = {
   "/ceny-na-montazh-dymoudaleniya": "/ceny/dymoudalenie",
   "/ceny-na-montazh-inzhenernyh-sistem": "/ceny/kompleks",
   "/ceny-na-peskostruj": "/ceny/peskostruj",
+  "/sotrudniki": "/team",
 };
 
 export const SEO_PHASE_LABELS: Record<number, string> = {

@@ -107,6 +107,7 @@ async function startServer() {
     "/garantiya":    "/garantii",
     "/licenzii-i-sertifikaty": "/sertifikaty",
     "/partneram":    "/partnery",
+    "/sotrudniki":   "/team",
   };
   app.use((req, res, next) => {
     const pathname = req.path.replace(/\/$/, "") || "/";
