@@ -50,7 +50,8 @@ export default function HeroSection() {
       setVideoLoaded(true);
     };
 
-    // На мобильных — запускаем после первого взаимодействия, на десктопе — сразу
+    // На мобильных — видео НЕ загружаем автоматически (экономит трафик и улучшает PageSpeed);
+    // запускаем только при явном взаимодействии пользователя. На десктопе — после idle.
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
       const onInteract = () => {
@@ -60,10 +61,7 @@ export default function HeroSection() {
       };
       window.addEventListener("touchstart", onInteract, { passive: true });
       window.addEventListener("scroll", onInteract, { passive: true });
-      // Fallback: запустить через 3 секунды в любом случае
-      const fallback = setTimeout(startVideo, 3000);
       return () => {
-        clearTimeout(fallback);
         window.removeEventListener("touchstart", onInteract);
         window.removeEventListener("scroll", onInteract);
       };
