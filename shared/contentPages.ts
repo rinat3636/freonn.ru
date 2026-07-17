@@ -19,6 +19,8 @@ export interface ContentPage {
   faq?: ContentPageFaq[];
 }
 
+import { EXTRA_CONTENT_PAGES } from "./contentPagesExtra";
+
 export const CONTENT_PAGES: ContentPage[] = [
   {
     slug: "kak-rasschitat-ventilyaciyu-dlya-sklada",
@@ -1002,6 +1004,7 @@ export const CONTENT_PAGES: ContentPage[] = [
       },
     ],
   },
+  ...EXTRA_CONTENT_PAGES,
 ];
 
 export const CONTENT_PAGE_BY_SLUG: Record<string, ContentPage> = Object.fromEntries(
