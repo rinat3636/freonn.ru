@@ -24,6 +24,21 @@ function isPortAvailable(port: number): Promise<boolean> {
   });
 }
 
+async function sendLeadToPlatform(body: Record<string, unknown>) {
+  const webhookUrl = process.env.PLATFORM_LEAD_WEBHOOK_URL;
+  if (!webhookUrl) return;
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, source: "freonn.ru" }),
+    });
+    if (!res.ok) console.warn("[freonn.ru] platform lead webhook failed:", res.status);
+  } catch (err) {
+    console.warn("[freonn.ru] platform lead webhook error:", err);
+  }
+}
+
 async function findAvailablePort(startPort: number = 3000): Promise<number> {
   for (let port = startPort; port < startPort + 20; port++) {
     if (await isPortAvailable(port)) {
@@ -237,6 +252,7 @@ async function startServer() {
       } catch {
         // notifyOwner failure is non-critical
       }
+      sendLeadToPlatform({ name, phone, email, service, message, pageUrl, referrer, fileUrl, fileName }).catch(() => {});
       res.json({ success: true });
     } catch (e) {
       console.error("[submit-form] Error:", e);
