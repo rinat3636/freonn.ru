@@ -427,6 +427,54 @@ def make_excerpt(service, obj, city, title: str, seed: int) -> str:
 # SVG covers
 # ═════════════════════════════════════════════════════════════════════════════
 
+def make_image_prompt(service: dict, obj: dict, city: dict) -> str:
+    """English visual prompt for Pollinations image generation."""
+    service_visuals = {
+        "Вентиляция": "ventilation system with air ducts and diffuser grilles",
+        "Кондиционирование": "air conditioning system with indoor units and ductwork",
+        "Дымоудаление": "smoke extraction system with smoke vents and exhaust fans",
+        "Отопление": "heating system with radiators, boilers and pipework",
+        "Холодоснабжение": "refrigeration system and cold supply equipment",
+        "Водоснабжение": "water supply and plumbing system",
+        "Электроснабжение": "electrical supply system with switchgear and cable trays",
+        "Пескоструй": "industrial sandblasting equipment and surface preparation",
+        "Автоматизация": "building automation system with control panels and sensors",
+        "Обслуживание": "HVAC maintenance technician servicing equipment",
+    }
+    object_visuals = {
+        "офис": "modern office interior",
+        "склад": "large warehouse interior",
+        "производство": "industrial production facility",
+        "ресторан": "restaurant dining area",
+        "школа": "school classroom building",
+        "больница": "hospital corridor",
+        "медучреждение": "medical facility interior",
+        "торговый центр": "shopping mall interior",
+        "гостиница": "hotel lobby",
+        "паркинг": "underground parking garage",
+        "серверная": "data center server room",
+        "дата-центр": "data center server room",
+        "завод": "factory floor",
+    }
+    _translit = {
+        "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "e",
+        "ж": "zh", "з": "z", "и": "i", "й": "y", "к": "k", "л": "l", "м": "m",
+        "н": "n", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u",
+        "ф": "f", "х": "h", "ц": "ts", "ч": "ch", "ш": "sh", "щ": "shch",
+        "ъ": "", "ы": "y", "ь": "", "э": "e", "ю": "yu", "я": "ya",
+    }
+    def translit(text: str) -> str:
+        return "".join(_translit.get(ch.lower(), ch) for ch in text).replace(" ", " ")
+
+    sv = service_visuals.get(service["name"], f"{service['name']} system")
+    ov = object_visuals.get(obj["name"].lower(), f"{obj['name']} building")
+    city_en = translit(city["name"])
+    return (
+        f"A realistic architectural photograph of a {sv} installed in a {ov} in {city_en}, Russia. "
+        f"Modern engineering, clean interior, professional equipment, natural lighting, high detail, photorealistic."
+    )
+
+
 def category_colors(category: str) -> tuple:
     palette = {
         "Вентиляция": ("#2D3092", "#0F1340"),
@@ -485,15 +533,14 @@ def main():
     matrix_slugs = parse_matrix_cities()
     cities = parse_cities()
 
-    # Clean previously generated article assets so stale files don't accumulate
-    # if the script is run multiple times.
+    # Clean previously generated article JSON and index, but keep existing
+    # cover images (JPG) that may have been downloaded separately.
     generated_dir = ROOT / "client" / "public" / "assets" / "blog"
     if generated_dir.exists():
         import shutil
-        for sub in ("articles", "covers"):
-            p = generated_dir / sub
-            if p.exists():
-                shutil.rmtree(p)
+        articles_dir = generated_dir / "articles"
+        if articles_dir.exists():
+            shutil.rmtree(articles_dir)
         (generated_dir / "articles-index.json").unlink(missing_ok=True)
 
     # Combine object data
@@ -555,7 +602,14 @@ def main():
         content = generate_content(service, obj, city, seed)
         read_time = estimate_read_time(content)
         description = f"{title} — материалы блога Freonn ({category}). Монтаж инженерных систем {city['phrase']}."[:165]
-        img = f"/assets/blog/covers/{slug}.svg"
+        image_prompt = make_image_prompt(service, obj, city)
+
+        cover_jpg = generated_dir / "covers" / f"{slug}.jpg"
+        if cover_jpg.exists():
+            img = f"/assets/blog/covers/{slug}.jpg"
+        else:
+            img = f"/assets/blog/covers/{slug}.svg"
+            write_text(f"client/public/assets/blog/covers/{slug}.svg", svg_cover(slug, title, category))
 
         article_data = {
             "slug": slug,
@@ -566,9 +620,9 @@ def main():
             "content": content,
             "published": published,
             "modified": published,
+            "imagePrompt": image_prompt,
         }
         write_json(f"client/public/assets/blog/articles/{slug}.json", article_data)
-        write_text(f"client/public/assets/blog/covers/{slug}.svg", svg_cover(slug, title, category))
 
         new_seo[slug] = {
             "title": title,
