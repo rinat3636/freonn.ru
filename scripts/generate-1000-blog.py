@@ -72,31 +72,10 @@ def parse_blog_seo() -> dict:
         }
     return out
 
-def parse_blog_index_cards(cdn_url: str) -> list:
-    # Try current Blog.tsx first, then fall back to the committed version
-    text = ""
-    try:
-        text = read_text("client/src/pages/Blog.tsx")
-    except FileNotFoundError:
-        pass
-
+def _extract_from_articles_array(text: str, cdn_url: str) -> list | None:
     m = re.search(r"const articles = \[(.*?)\];", text, re.S)
     if not m:
-        # Blog.tsx may have been refactored; grab the last committed version from git
-        try:
-            old = subprocess.check_output(
-                ["git", "show", "HEAD:client/src/pages/Blog.tsx"],
-                cwd=ROOT,
-                stderr=subprocess.DEVNULL,
-                text=True,
-            )
-            m = re.search(r"const articles = \[(.*?)\];", old, re.S)
-        except Exception:
-            pass
-
-    if not m:
-        raise RuntimeError("Could not find Blog.tsx articles array (current or in git history)")
-
+        return None
     body = m.group(1)
     pattern = re.compile(
         r'\{\s*title:\s*"([^"]+)",\s*category:\s*"([^"]+)",\s*readTime:\s*"([^"]+)",\s*img:\s*`([^`]+)`,\s*href:\s*"([^"]+)",\s*excerpt:\s*"([^"]+)"\s*,?\s*\}',
@@ -116,6 +95,57 @@ def parse_blog_index_cards(cdn_url: str) -> list:
             "excerpt": excerpt,
         })
     return cards
+
+
+def _extract_from_legacy_articles(text: str, cdn_url: str) -> list | None:
+    m = re.search(r'const legacyArticles: Record<string, \{[^}]*\}> = \{(.*?)\};\s*\nexport default', text, re.S)
+    if not m:
+        return None
+    body = m.group(1)
+    pattern = re.compile(
+        r'"([^"]+)":\s*\{\s*title:\s*"([^"]+)",\s*category:\s*"([^"]+)",\s*readTime:\s*"([^"]+)",\s*img:\s*`([^`]+)`,\s*content:\s*`([^`]*)`\s*,?\s*\},?',
+        re.S,
+    )
+    cards = []
+    for slug, title, category, read_time, img_tpl, content in pattern.findall(body):
+        # Build an excerpt from the first paragraph of content
+        plain = re.sub(r"\s+", " ", content.replace("##", "").replace("`", "").strip())
+        excerpt = (plain[:160] + "…") if len(plain) > 160 else plain
+        img = img_tpl.replace("${CDN}", cdn_url)
+        cards.append({
+            "slug": slug,
+            "title": title,
+            "category": category,
+            "readTime": read_time,
+            "img": img,
+            "href": f"/blog/{slug}",
+            "excerpt": excerpt,
+        })
+    return cards
+
+
+def parse_blog_index_cards(cdn_url: str) -> list:
+    # Try the old articles array first; after the Blog.tsx refactor use legacyArticles.
+    text = ""
+    try:
+        text = read_text("client/src/pages/Blog.tsx")
+    except FileNotFoundError:
+        pass
+
+    cards = _extract_from_articles_array(text, cdn_url)
+    if cards:
+        return cards
+
+    try:
+        blog_article_text = read_text("client/src/pages/BlogArticle.tsx")
+    except FileNotFoundError:
+        blog_article_text = ""
+
+    cards = _extract_from_legacy_articles(blog_article_text, cdn_url)
+    if cards:
+        return cards
+
+    raise RuntimeError("Could not find Blog.tsx articles array or BlogArticle.tsx legacyArticles")
 
 def parse_cdn_url() -> str:
     for src in ("client/src/pages/Blog.tsx", "client/src/pages/BlogArticle.tsx"):
