@@ -5,17 +5,9 @@
 import { useSEO } from "@/hooks/useSEO";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import { useEffect, useRef, useState } from "react";
-import type { ComponentType } from "react";
-
-const BelowFoldPlaceholder = () => (
-  <div className="min-h-[800px] bg-[#F7F8FF] animate-pulse" aria-hidden="true" />
-);
+import HomeBelowFold from "./HomeBelowFold";
 
 export default function Home() {
-  const [HomeBelowFold, setHomeBelowFold] = useState<ComponentType | null>(null);
-  const placeholderRef = useRef<HTMLDivElement>(null);
-
   useSEO({
     title: "Freonn — инженерная компания | Монтаж вентиляции, кондиционирования в Москве",
     description: "Freonn — проектирование, монтаж и обслуживание вентиляции, кондиционирования, дымоудаления, отопления и электроснабжения в Москве и МО. Более 1280 объектов. Гарантия 1 год на монтажные работы. Бесплатный выезд инженера.",
@@ -36,47 +28,12 @@ export default function Home() {
     },
   });
 
-  useEffect(() => {
-    // Загружаем нижние секции только при приближении к viewport или по таймауту.
-    // Это освобождает сеть/CPU для критичного First/Largest Contentful Paint.
-    const load = () => {
-      import("./HomeBelowFold").then((m) => setHomeBelowFold(() => m.default));
-    };
-
-    // Fallback: загрузить через 8 секунд, даже если никто не скроллил.
-    const fallbackTimer = setTimeout(load, 8000);
-
-    if ("IntersectionObserver" in window) {
-      const el = placeholderRef.current;
-      if (!el) return () => clearTimeout(fallbackTimer);
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            load();
-            observer.disconnect();
-            clearTimeout(fallbackTimer);
-          }
-        },
-        { rootMargin: "0px 0px 200px 0px" }
-      );
-      observer.observe(el);
-      return () => {
-        observer.disconnect();
-        clearTimeout(fallbackTimer);
-      };
-    }
-
-    return () => clearTimeout(fallbackTimer);
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
         <HeroSection />
-        <div ref={placeholderRef}>
-          {HomeBelowFold ? <HomeBelowFold /> : <BelowFoldPlaceholder />}
-        </div>
+        <HomeBelowFold />
       </main>
     </div>
   );

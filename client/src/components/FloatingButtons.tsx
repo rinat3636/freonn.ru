@@ -58,7 +58,7 @@ export default function FloatingButtons() {
 
         {/* Phone */}
         <motion.a
-          href="tel:88001012009"
+          href="tel:+78001012009"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.8 }}

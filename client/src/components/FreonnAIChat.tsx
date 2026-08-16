@@ -411,7 +411,7 @@ export default function FreonnAIChat() {
                 </button>
               </div>
               <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-                AI-ответы носят информационный характер · <a href="tel:88001012009" className="underline">8(800)101-2009</a>
+                AI-ответы носят информационный характер · <a href="tel:+78001012009" className="underline">8(800)101-2009</a>
               </p>
             </div>
           </motion.div>

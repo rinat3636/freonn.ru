@@ -22,7 +22,7 @@ function formatPhone(digits: string): string {
 
 export default function ContactSection() {
   const [, navigate] = useLocation();
-  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "", type: "Монтаж" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "", type: "Монтаж вентиляции" });
   const [phoneDigits, setPhoneDigits] = useState("");
   const [sending, setSending] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -99,7 +99,7 @@ export default function ContactSection() {
         }
         ymGoal("form_submit", { service: form.type });
         gaEvent("generate_lead", { service: form.type, page_path: window.location.pathname });
-        setForm({ name: "", phone: "", email: "", message: "", type: "Монтаж" });
+        setForm({ name: "", phone: "", email: "", message: "", type: "Монтаж вентиляции" });
         setPhoneDigits("");
         setFile(null);
         setFileUrl(null);
@@ -321,7 +321,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <div className="text-white/60 text-xs font-body mb-0.5">Телефон</div>
-                    <a href="tel:88001012009" className="text-white font-heading font-semibold text-lg hover:text-[#B91C1C] transition-colors">
+                    <a href="tel:+78001012009" className="text-white font-heading font-semibold text-lg hover:text-[#B91C1C] transition-colors">
                       8(800)101-2009
                     </a>
                     <div className="text-white/50 text-xs font-body">Бесплатно по России</div>

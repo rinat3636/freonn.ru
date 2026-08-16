@@ -91,7 +91,7 @@ export default function TermsOfServicePage() {
             По вопросам, связанным с настоящим Соглашением, можно обращаться по электронной почте{" "}
             <a href="mailto:freonn@internet.ru" className="text-[#2D3092] hover:underline">freonn@internet.ru</a>{" "}
             или телефону{" "}
-            <a href="tel:88001012009" className="text-[#2D3092] hover:underline">8 (800) 101-20-09</a>.
+            <a href="tel:+78001012009" className="text-[#2D3092] hover:underline">8 (800) 101-20-09</a>.
           </p>
         </div>
       </section>

@@ -419,7 +419,7 @@ export default function PricingServicePage({ service }: PricingServicePageProps)
                 <a href="/contacts" className="btn-dark inline-flex items-center gap-2 justify-center">
                   Получить точный расчёт <ArrowRight size={14} />
                 </a>
-                <a href="tel:88001012009" className="btn-dark inline-flex items-center gap-2 justify-center">
+                <a href="tel:+78001012009" className="btn-dark inline-flex items-center gap-2 justify-center">
                   <Phone size={14} /> 8(800)101-2009
                 </a>
               </div>

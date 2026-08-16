@@ -83,7 +83,7 @@ export default function TeamPage() {
               электроснабжении или холодоснабжении — отправьте резюме или позвоните.
             </p>
             <a
-              href="tel:88001012009"
+              href="tel:+78001012009"
               className="inline-flex items-center gap-2 bg-[#B91C1C] hover:bg-[#991b1b] text-white px-5 py-2.5 rounded-lg font-body font-medium transition-colors"
             >
               <Phone size={18} /> 8 (800) 101-20-09

@@ -1,9 +1,8 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch, Redirect } from "wouter";
-import PreloaderScreen from "./components/PreloaderScreen";
 import SuspenseFallback from "./components/SuspenseFallback";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -219,7 +218,6 @@ function Router() {
 }
 
 function App() {
-  const [preloaderDone, setPreloaderDone] = useState(false);
   useAnalytics();
 
   return (
@@ -231,9 +229,6 @@ function App() {
         <FreonnAuthProvider>
         <TooltipProvider>
           <Toaster />
-          {!preloaderDone && (
-            <PreloaderScreen onDone={() => setPreloaderDone(true)} />
-          )}
           <Router />
         </TooltipProvider>
         </FreonnAuthProvider>
