@@ -7,18 +7,8 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Phone, Mail, MapPin, Clock, Send, Paperclip, X as XIcon } from "lucide-react";
 import { toast } from "sonner";
-import { ymGoal, gaEvent } from "@/lib/ym";
-
-// Format digits into +7 (XXX) XXX-XX-XX mask
-function formatPhone(digits: string): string {
-  const d = digits.replace(/\D/g, "").slice(0, 10);
-  let result = "";
-  if (d.length > 0) result += "(" + d.slice(0, 3);
-  if (d.length >= 3) result += ") " + d.slice(3, 6);
-  if (d.length >= 6) result += "-" + d.slice(6, 8);
-  if (d.length >= 8) result += "-" + d.slice(8, 10);
-  return result;
-}
+import { ymGoal } from "@/lib/ym";
+import { formatPhone, submitLead } from "@/lib/leads";
 
 export default function ContactSection() {
   const [, navigate] = useLocation();
@@ -65,53 +55,43 @@ export default function ContactSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.name || !form.phone) return;
     setSending(true);
-    try {
-      const res = await fetch("/api/submit-form", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          phone: form.phone,
-          email: form.email,
-          service: form.type,
-          message: form.message,
-          fileUrl: fileUrl || undefined,
-          fileName: file?.name || undefined,
-          pageUrl: window.location.href,
-          referrer: document.referrer || undefined,
-        }),
-      });
-      if (res.ok) {
-        try {
-          const { isLoggedIn } = await import("@/lib/freonn-group/auth-storage");
-          const { isFreonnApiConfigured } = await import("@/lib/freonn-group/config");
-          const { submitFreonnRequest } = await import("@/lib/freonn-group/orders");
-          if (isFreonnApiConfigured() && isLoggedIn()) {
-            await submitFreonnRequest({
-              serviceLabel: form.type,
-              message: form.message,
-              fileUrl: fileUrl || undefined,
-            });
-          }
-        } catch (syncErr) {
-          console.warn("[Contact] Freonn Group request sync", syncErr);
+    const ok = await submitLead({
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      service: form.type,
+      message: form.message,
+      fileUrl: fileUrl || undefined,
+      fileName: file?.name || undefined,
+      pageUrl: window.location.href,
+      referrer: document.referrer || undefined,
+    });
+    if (ok) {
+      try {
+        const { isLoggedIn } = await import("@/lib/freonn-group/auth-storage");
+        const { isFreonnApiConfigured } = await import("@/lib/freonn-group/config");
+        const { submitFreonnRequest } = await import("@/lib/freonn-group/orders");
+        if (isFreonnApiConfigured() && isLoggedIn()) {
+          await submitFreonnRequest({
+            serviceLabel: form.type,
+            message: form.message,
+            fileUrl: fileUrl || undefined,
+          });
         }
-        ymGoal("form_submit", { service: form.type });
-        gaEvent("generate_lead", { service: form.type, page_path: window.location.pathname });
-        setForm({ name: "", phone: "", email: "", message: "", type: "Монтаж вентиляции" });
-        setPhoneDigits("");
-        setFile(null);
-        setFileUrl(null);
-        navigate("/spasibo");
-      } else {
-        toast.error("Ошибка при отправке. Позвоните нам: 8(800)101-2009");
+      } catch (syncErr) {
+        console.warn("[Contact] Freonn Group request sync", syncErr);
       }
-    } catch {
-      toast.error("Ошибка соединения. Позвоните нам: 8(800)101-2009");
-    } finally {
-      setSending(false);
+      setForm({ name: "", phone: "", email: "", message: "", type: "Монтаж вентиляции" });
+      setPhoneDigits("");
+      setFile(null);
+      setFileUrl(null);
+      navigate("/spasibo");
+    } else {
+      toast.error("Ошибка при отправке. Позвоните нам: 8(800)101-2009");
     }
+    setSending(false);
   };
 
   return (

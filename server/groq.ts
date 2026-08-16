@@ -21,13 +21,15 @@ export function getGroqApiUrl(): string {
 export const GROQ_CHAT_MODEL = "llama-3.1-8b-instant";
 export const GROQ_CONTENT_MODEL = "llama-3.3-70b-versatile";
 
+let groqAuthFailed = false;
+
 function getApiKey(): string | null {
   const key = process.env.GROQ_API_KEY ?? "";
   return key.trim().length > 0 ? key : null;
 }
 
 export function isGroqAvailable(): boolean {
-  return getApiKey() !== null;
+  return !groqAuthFailed && getApiKey() !== null;
 }
 
 interface GroqMessage {
@@ -81,7 +83,12 @@ export async function groqChat(
 
     if (!response.ok) {
       const errText = await response.text().catch(() => "unknown error");
-      console.error(`[Groq] API error ${response.status}: ${errText}`);
+      if (response.status === 401 || response.status === 403) {
+        groqAuthFailed = true;
+        console.error(`[Groq] API key rejected (${response.status}). Disabling Groq until restart.`);
+      } else {
+        console.error(`[Groq] API error ${response.status}: ${errText}`);
+      }
       return null;
     }
 
@@ -135,7 +142,12 @@ export async function* groqChatStream(
     clearTimeout(timer);
 
     if (!response.ok || !response.body) {
-      console.error(`[Groq] Stream error ${response.status}`);
+      if (response.status === 401 || response.status === 403) {
+        groqAuthFailed = true;
+        console.error(`[Groq] API key rejected (${response.status}). Disabling Groq until restart.`);
+      } else {
+        console.error(`[Groq] Stream error ${response.status}`);
+      }
       return;
     }
 
