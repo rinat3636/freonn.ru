@@ -543,6 +543,12 @@ def main():
             shutil.rmtree(articles_dir)
         (generated_dir / "articles-index.json").unlink(missing_ok=True)
 
+    # If a universal branded cover exists, use it for all articles.
+    universal_img = None
+    universal_jpg = generated_dir / "covers" / "freonn-universal.jpg"
+    if universal_jpg.exists():
+        universal_img = "/assets/blog/covers/freonn-universal.jpg"
+
     # Combine object data
     objects = {}
     for slug, data in object_types.items():
@@ -604,12 +610,15 @@ def main():
         description = f"{title} — материалы блога Freonn ({category}). Монтаж инженерных систем {city['phrase']}."[:165]
         image_prompt = make_image_prompt(service, obj, city)
 
-        cover_jpg = generated_dir / "covers" / f"{slug}.jpg"
-        if cover_jpg.exists():
-            img = f"/assets/blog/covers/{slug}.jpg"
+        if universal_img:
+            img = universal_img
         else:
-            img = f"/assets/blog/covers/{slug}.svg"
-            write_text(f"client/public/assets/blog/covers/{slug}.svg", svg_cover(slug, title, category))
+            cover_jpg = generated_dir / "covers" / f"{slug}.jpg"
+            if cover_jpg.exists():
+                img = f"/assets/blog/covers/{slug}.jpg"
+            else:
+                img = f"/assets/blog/covers/{slug}.svg"
+                write_text(f"client/public/assets/blog/covers/{slug}.svg", svg_cover(slug, title, category))
 
         article_data = {
             "slug": slug,
