@@ -14,11 +14,14 @@ The script is resumable: it skips slugs that already have a non-empty JPG.
 
 import argparse
 import json
+import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+
+sys.stdout.reconfigure(line_buffering=True)
 
 ROOT = Path(__file__).resolve().parent.parent
 ARTICLES_DIR = ROOT / "client" / "public" / "assets" / "blog" / "articles"
