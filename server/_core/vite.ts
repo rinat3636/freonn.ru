@@ -185,6 +185,12 @@ function injectServerSeo(html: string, pathname: string, status: number) {
   const seo = getServerSeo(pathname, status);
   if (!seo) return next;
 
+  // Fallback static body for crawlers that do not execute JS.
+  // React createRoot will replace this markup once the bundle loads.
+  const h1 = seo.title.replace(/\s*[-–—]\s*Freonn\s*$/, "").trim() || seo.title;
+  const bodyFallback = `<main style="font-family:sans-serif;color:#0F1340;max-width:960px;margin:40px auto;padding:0 20px;"><h1 style="font-size:2rem;margin-bottom:1rem;line-height:1.2;">${escapeHtml(h1)}</h1><p style="font-size:1.125rem;line-height:1.6;">${escapeHtml(seo.description || "")}</p></main>`;
+  next = next.replace(/<div id="root"><\/div>/, `<div id="root">${bodyFallback}</div>`);
+
   const clean = pathname.replace(/\/$/, "") || "/";
   const resolvedClean = resolveCanonicalPath(clean);
   const canonicalPath =
