@@ -621,6 +621,9 @@ def main():
             "published": published,
             "modified": published,
             "imagePrompt": image_prompt,
+            "serviceSlug": service["slug"],
+            "objectSlug": obj["slug"],
+            "citySlug": city["slug"],
         }
         write_json(f"client/public/assets/blog/articles/{slug}.json", article_data)
 
