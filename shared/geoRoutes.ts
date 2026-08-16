@@ -163,20 +163,9 @@ export const SERVICE_LOCATION_ROUTES: ServiceLocationRoute[] = SERVICE_SLUGS.fla
 /** Slug-ы локаций для парсинга URL (длинные первыми — naro-fominsk, moskovskaya-oblast) */
 const LOCATION_SLUGS_BY_LENGTH = [...CITIES.map((c) => c.slug)].sort((a, b) => b.length - a.length);
 
-export const BLOG_SLUGS = new Set([
-  "montazh-teplovyh-punktov", "avtomatizaciya-sistem", "tekhnicheskij-audit",
-  "montazh-ventilyacii", "kkb-dlya-pritochnoj-ustanovki", "ventilyaciya-v-shkole",
-  "kondicionirovanie-kinoteatra", "ventilyaciya-medicinskih-uchrezhdenij",
-  "kondicionirovanie-servernoj-komnaty", "vozdushnoe-otoplenie-ceha",
-  "ventilyaciya-avtostoyanka", "dispetcherizaciya-sistem",
-  "kratnost-i-raschet-vozduhoobmena", "ventilyacionnoe-oborudovanie", "rekuperator",
-  "kondicionirovanie-vozduha", "filtry-dlya-vytyazhek", "kanalnye-ventilyatory",
-  "ventilyaciya-pod-klyuch", "proektirovanie-ventilyacii", "obsluzhivanie-ventilyacii",
-  "vrf-sistemy", "chillery-i-fankojly", "dymoudalenie-pod-klyuch", "teplovye-nasosy",
-  "energoeffektivnost-ventilyacii", "montazh-kondicionirovaniya", "ventilyaciya-sklada",
-  "kondicionirovanie-pod-klyuch", "ventilyaciya-promyshlennyh-predpriyatij",
-  "avtomatika-ventilyacii",
-]);
+import { BLOG_ARTICLE_SEO } from "./blogSeo";
+
+export const BLOG_SLUGS = new Set(Object.keys(BLOG_ARTICLE_SEO));
 
 export const PRICING_SLUGS = new Set([
   "ventilyaciya", "kondicionirovanie", "dymoudalenie", "peskostruj", "kompleks",

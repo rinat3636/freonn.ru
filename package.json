@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
-    "build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../../vite.config --external:./vite.config --define:import.meta.dirname=undefined",
+    "build": "python3 scripts/generate-1000-blog.py && vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../../vite.config --external:./vite.config --define:import.meta.dirname=undefined",
     "build:pages": "NODE_ENV=production vite build",
     "predeploy": "pnpm run build:pages",
     "deploy": "gh-pages -d dist/public",

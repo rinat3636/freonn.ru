@@ -114,3 +114,9 @@ client/public/__manus__/version.json
 
 # User-uploaded files (stored on disk, served at /uploads)
 uploads/
+
+# Auto-generated blog assets (JSON articles + SVG covers are produced by scripts/generate-1000-blog.py)
+client/public/assets/blog/
+shared/blogSeo.ts
+client/public/sitemap-blog.xml
+dist/

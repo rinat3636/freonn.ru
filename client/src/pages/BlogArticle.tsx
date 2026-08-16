@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ymGoal } from "@/lib/ym";
 /*
  * FREONN BLOG ARTICLE PAGE — /blog/:slug
@@ -7,46 +8,12 @@ import PageLayout from "@/components/PageLayout";
 import { useRoute } from "wouter";
 import { motion } from "framer-motion";
 import { useSEO } from "@/hooks/useSEO";
-import { getBlogArticleSeoMeta } from "@shared/blogSeo";
+import { getBlogArticleSeoMeta, getBlogArticleSeo } from "@shared/blogSeo";
 import { ArrowLeft, Phone } from "lucide-react";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663524928365/d5oRPUYjSRzESZKpUgG9pW";
 
-const articleDates: Record<string, { published: string; modified?: string }> = {
-  "montazh-teplovyh-punktov":               { published: "2024-02-15T10:00:00+03:00" },
-  "avtomatizaciya-sistem":                   { published: "2024-03-01T10:00:00+03:00" },
-  "tekhnicheskij-audit":                     { published: "2024-03-20T10:00:00+03:00" },
-  "montazh-ventilyacii":                     { published: "2024-04-10T10:00:00+03:00" },
-  "kkb-dlya-pritochnoj-ustanovki":           { published: "2024-05-01T10:00:00+03:00" },
-  "ventilyaciya-v-shkole":                   { published: "2024-05-20T10:00:00+03:00" },
-  "kondicionirovanie-kinoteatra":            { published: "2024-06-10T10:00:00+03:00" },
-  "ventilyaciya-medicinskih-uchrezhdenij":   { published: "2024-07-01T10:00:00+03:00" },
-  "kondicionirovanie-servernoj-komnaty":     { published: "2024-07-20T10:00:00+03:00" },
-  "vozdushnoe-otoplenie-ceha":               { published: "2024-08-10T10:00:00+03:00" },
-  "ventilyaciya-avtostoyanka":               { published: "2024-08-25T10:00:00+03:00" },
-  "dispetcherizaciya-sistem":               { published: "2024-09-15T10:00:00+03:00" },
-  "kratnost-i-raschet-vozduhoobmena":        { published: "2024-10-01T10:00:00+03:00" },
-  "ventilyacionnoe-oborudovanie":            { published: "2024-10-20T10:00:00+03:00" },
-  "rekuperator":                             { published: "2024-11-05T10:00:00+03:00" },
-  "kondicionirovanie-vozduha":              { published: "2024-11-25T10:00:00+03:00" },
-  "filtry-dlya-vytyazhek":                  { published: "2024-12-10T10:00:00+03:00" },
-  "kanalnye-ventilyatory":                  { published: "2024-12-28T10:00:00+03:00" },
-  "ventilyaciya-pod-klyuch":                { published: "2025-01-15T10:00:00+03:00" },
-  "proektirovanie-ventilyacii":             { published: "2025-02-01T10:00:00+03:00" },
-  "obsluzhivanie-ventilyacii":              { published: "2025-02-20T10:00:00+03:00" },
-  "vrf-sistemy":                            { published: "2025-03-10T10:00:00+03:00" },
-  "chillery-i-fankojly":                    { published: "2025-03-25T10:00:00+03:00" },
-  "dymoudalenie-pod-klyuch":                { published: "2025-04-10T10:00:00+03:00" },
-  "teplovye-nasosy":                        { published: "2025-04-25T10:00:00+03:00" },
-  "energoeffektivnost-ventilyacii":         { published: "2025-05-15T10:00:00+03:00" },
-  "montazh-kondicionirovaniya":             { published: "2025-06-01T10:00:00+03:00" },
-  "ventilyaciya-sklada":                    { published: "2025-06-20T10:00:00+03:00" },
-  "kondicionirovanie-pod-klyuch":           { published: "2025-07-05T10:00:00+03:00" },
-  "ventilyaciya-promyshlennyh-predpriyatij": { published: "2025-07-25T10:00:00+03:00" },
-  "avtomatika-ventilyacii":                 { published: "2025-08-10T10:00:00+03:00" },
-};
-
-const articles: Record<string, {
+const legacyArticles: Record<string, {
   title: string;
   category: string;
   readTime: string;
@@ -895,13 +862,35 @@ const categoryColors: Record<string, string> = {
 export default function BlogArticlePage() {
   const [, params] = useRoute("/blog/:slug");
   const slug = params?.slug || "";
-  const article = articles[slug];
-  const dates = articleDates[slug];
+  const staticArticle = legacyArticles[slug];
+  const [article, setArticle] = useState<typeof staticArticle | null>(staticArticle ?? null);
+  const [loading, setLoading] = useState(!staticArticle);
+
+  useEffect(() => {
+    if (staticArticle) {
+      setArticle(staticArticle);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    fetch(`/assets/blog/articles/${slug}.json`)
+      .then(r => (r.ok ? r.json() : Promise.reject()))
+      .then((data) => {
+        if (data && typeof data.content === "string") {
+          setArticle(data);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [slug, staticArticle]);
 
   const seoMeta = article ? getBlogArticleSeoMeta(slug) : null;
   const fallbackDescription = article
-    ? article.content.replace(/[#*]/g, "").replace(/\n/g, " ").slice(0, 160)
+    ? (article as any).excerpt ?? article.content.replace(/[#*]/g, "").replace(/\n/g, " ").slice(0, 160)
     : "";
+  const dates: { published: string; modified?: string } | null = article && (article as any).published
+    ? { published: (article as any).published, modified: (article as any).modified }
+    : (slug ? { published: getBlogArticleSeo(slug)?.published ?? "", modified: getBlogArticleSeo(slug)?.published } : null);
 
   useSEO(article ? {
     title: seoMeta?.title ?? `${article.title} — Freonn`,
@@ -920,6 +909,16 @@ export default function BlogArticlePage() {
     description: 'Статья не найдена',
     noIndex: true,
   });
+
+  if (loading) {
+    return (
+      <PageLayout title="Загрузка статьи" breadcrumb={[{ label: "Блог", href: "/blog" }, { label: "..." }]}>
+        <div className="container py-20 text-center">
+          <p className="text-gray-500 font-body">Загружаем статью...</p>
+        </div>
+      </PageLayout>
+    );
+  }
 
   if (!article) {
     return (
